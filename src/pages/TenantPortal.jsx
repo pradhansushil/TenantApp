@@ -11,38 +11,45 @@ export default function TenantPortal() {
     description: "",
   });
 
-  // Status message (success or error)
   const [statusMessage, setStatusMessage] = useState("");
-  const [isSending, setIsSending] = useState(false); // disable submit while sending
+  const [isSending, setIsSending] = useState(false);
 
   // SheetDB API URL
-  const SHEETDB_URL = "https://sheetdb.io/api/v1/p69mudl8gzef9"; // ← Replace with your SheetDB API URL
+  const SHEETDB_URL = "https://sheetdb.io/api/v1/trs7w2oteqnyc";
 
   const togglePayments = () => setShowPayments(!showPayments);
   const toggleMaintenance = () => setShowMaintenance(!showMaintenance);
 
-  // Update form inputs as the user types
+  // Update form inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent page reload
+    e.preventDefault();
     setStatusMessage("Sending...");
     setIsSending(true);
 
     try {
-      // SheetDB expects data inside a "data" object
+      const now = new Date();
+      const formattedDate = now.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+      const timestamp = now.toISOString(); // Full timestamp for sorting
+
       const payload = {
         data: {
-          tenantName: formData.tenantName,
-          unitNumber: formData.unit,
-          description: formData.description,
+          Type_Maintenance: "Maintenance",
+          MaintenanceID: `M-${Date.now()}`,
+          TenantName: formData.tenantName,
+          Unit_Maintenance: formData.unit,
+          Description: formData.description,
+          DateSubmitted: formattedDate, // for display
+          Timestamp: timestamp, // for sorting
         },
       };
 
@@ -56,7 +63,6 @@ export default function TenantPortal() {
 
       const data = await res.json();
 
-      // Check if SheetDB returned success
       if (data.created) {
         setStatusMessage(
           "We received your maintenance request and will get back to you soon. ✅"
@@ -88,8 +94,8 @@ export default function TenantPortal() {
           <div>
             <p>
               <strong>
-                To pay your rent, click the link below. Make sure to include
-                your Unit # in the payment notes.
+                To pay your rent, click the link below. Include your Unit # in
+                the notes.
               </strong>
             </p>
             <a
@@ -115,7 +121,6 @@ export default function TenantPortal() {
           <section aria-labelledby="maintenance-heading">
             <h2 id="maintenance-heading">Submit a Maintenance Request</h2>
 
-            {/* Maintenance Request Form */}
             <form onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="unit">Unit # (required):</label>
