@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer"; // Footer will appear on all pages
 import { Home } from "./pages/Home";
@@ -7,9 +7,14 @@ import AdminLogin from "./pages/AdminLogin";
 import Admin from "./pages/Admin";
 
 export function App() {
+  const location = useLocation();
+
+  // Only show Header if NOT on admin pages
+  const showHeader = !location.pathname.startsWith("/admin");
+
   return (
     <div className="App">
-      <Header />
+      {showHeader && <Header />}
 
       <Routes>
         {/* Home page route */}
@@ -21,6 +26,7 @@ export function App() {
         {/* Admin Login route */}
         <Route path="/admin-login" element={<AdminLogin />} />
 
+        {/* Admin dashboard route */}
         <Route path="/admin" element={<Admin />} />
       </Routes>
 
