@@ -1,27 +1,27 @@
 import { useEffect, useState } from "react";
 
-export default function DashboardMaintenance({ onViewAll }) {
+export default function DashboardMaintenance({ onViewAll, refreshCounter }) {
   const [latestRequests, setLatestRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const SHEETDB_URL = "https://sheetdb.io/api/v1/trs7w2oteqnyc"; // your SheetDB URL
+  const SHEETDB_URL =
+    "https://sheetdb.io/api/v1/trs7w2oteqnyc?sheet=Maintenance";
 
   useEffect(() => {
     const fetchRequests = async () => {
+      setLoading(true); // show loading on refresh
       try {
         const res = await fetch(SHEETDB_URL);
         const data = await res.json();
 
-        // Filter for maintenance rows and map to displayable format
-        const maintenanceRows = data
-          .filter((item) => item.Type_Maintenance === "Maintenance")
-          .map((item) => ({
-            maintenanceID: item.MaintenanceID,
-            tenantName: item.TenantName,
-            unitNumber: item.Unit_Maintenance,
-            details: item.Description,
-            dateSubmitted: item.DateSubmitted || "N/A", // human-readable
-            timestamp: item.Maintenance_Timestamp || "1970-01-01T00:00:00.000Z", // for sorting
-          }));
+        // Map to displayable format
+        const maintenanceRows = data.map((item) => ({
+          maintenanceID: item.MaintenanceID,
+          tenantName: item.TenantName,
+          unitNumber: item.Unit,
+          details: item.Description,
+          dateSubmitted: item.DateSubmitted || "N/A",
+          timestamp: item.Timestamp || "1970-01-01T00:00:00.000Z",
+        }));
 
         setLatestRequests(maintenanceRows);
       } catch (err) {
@@ -32,7 +32,7 @@ export default function DashboardMaintenance({ onViewAll }) {
     };
 
     fetchRequests();
-  }, []);
+  }, [refreshCounter]); // <-- added dependency
 
   if (loading) return <p>Loading maintenance requests...</p>;
 
