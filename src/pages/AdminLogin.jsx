@@ -16,7 +16,7 @@ export default function AdminLogin() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       // Redirect to admin dashboard after successful login
-      navigate("/admin");
+      navigate("/admin/");
     } catch (err) {
       setError(err.message);
     }
