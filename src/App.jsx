@@ -4,7 +4,7 @@ import Footer from "./components/Footer"; // Footer will appear on all pages
 import { Home } from "./pages/Home";
 import TenantPortal from "./pages/TenantPortal";
 import AdminLogin from "./pages/AdminLogin";
-import Admin from "./pages/Admin";
+import AdminPanel from "./pages/AdminPanel";
 
 export function App() {
   const location = useLocation();
@@ -27,7 +27,7 @@ export function App() {
         <Route path="/admin-login" element={<AdminLogin />} />
 
         {/* Admin dashboard route */}
-        <Route path="/admin" element={<Admin />} />
+        <Route path="/admin/*" element={<AdminPanel />} />
       </Routes>
 
       {/* Footer outside Routes so it shows on all pages */}
