@@ -1,27 +1,26 @@
 import { useEffect, useState } from "react";
 
-export default function DashboardTenants({ onViewAll }) {
+export default function DashboardTenants({ onViewAll, refreshCounter }) {
   const [latestTenants, setLatestTenants] = useState([]);
   const [loading, setLoading] = useState(true);
-  const SHEETDB_URL = "https://sheetdb.io/api/v1/trs7w2oteqnyc"; // your SheetDB URL
+  const SHEETDB_URL = "https://sheetdb.io/api/v1/trs7w2oteqnyc?sheet=Tenants";
 
   useEffect(() => {
     const fetchTenants = async () => {
+      setLoading(true); // start loading whenever refreshCounter changes
       try {
         const res = await fetch(SHEETDB_URL);
         const data = await res.json();
 
-        // Filter tenant rows and map to displayable format
-        const tenantRows = data
-          .filter((item) => item.Type_Tenant === "Tenant")
-          .map((item) => ({
-            tenantID: item.TenantID || `T-${Date.now()}`, // fallback if not in sheet
-            name: item.Name,
-            unit: item.Unit_Tenant,
-            moveInDate: item.MoveInDate,
-            phone: item.Phone,
-            timestamp: item.Tenant_Timestamp || "1970-01-01T00:00:00.000Z", // for sorting
-          }));
+        // Map to displayable format
+        const tenantRows = data.map((item) => ({
+          tenantID: item.TenantID || `T-${Date.now()}`,
+          name: item.Name,
+          unit: item.Unit,
+          moveInDate: item.MoveInDate,
+          phone: item.Phone,
+          timestamp: item.Timestamp || "1970-01-01T00:00:00.000Z",
+        }));
 
         setLatestTenants(tenantRows);
       } catch (err) {
@@ -32,7 +31,7 @@ export default function DashboardTenants({ onViewAll }) {
     };
 
     fetchTenants();
-  }, []);
+  }, [refreshCounter]); // <--- added dependency here
 
   if (loading) return <p>Loading tenants...</p>;
 
