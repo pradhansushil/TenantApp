@@ -12,8 +12,8 @@ import AdminQuickActions from "../components/admin/AdminQuickActions";
 // Admin pages
 import Dashboard from "./Dashboard";
 import Tenants from "./Tenants";
-/*import Units from "./Units";
-import Payments from "./Payments";
+import Units from "./Units";
+/*import Payments from "./Payments";
 import Maintenance from "./Maintenance";*/
 
 export default function AdminPanel() {
@@ -66,8 +66,8 @@ export default function AdminPanel() {
           <Routes>
             <Route index element={<Dashboard />} />
             <Route path="tenants" element={<Tenants />} />
-            {/*<Route path="units" element={<Units />} />
-            <Route path="payments" element={<Payments />} />
+            <Route path="units" element={<Units />} />
+            {/*<Route path="payments" element={<Payments />} />
             <Route path="maintenance" element={<Maintenance />} /> */}
           </Routes>
         </main>
