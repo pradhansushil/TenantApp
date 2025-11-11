@@ -1,8 +1,3 @@
-// AdminHeader.jsx
-// A simple header component for the Admin Dashboard area.
-
-import React from "react";
-
 export default function AdminHeader({ user, handleLogout }) {
   return (
     // Semantic header element for accessibility
