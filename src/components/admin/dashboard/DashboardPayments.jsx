@@ -1,60 +1,108 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import { fetchAllPayments } from "../../../services/duePaymentService";
 
-// DashboardPayments component
-// Props:
-// - onViewAll: function to switch the active section to "Payments"
-export default function DashboardPayments({ onViewAll }) {
-  // Placeholder array for now; replace with actual data later
-  const recentPayments = [
-    // Example data for testing
-    // { tenantName: "John Doe", unitNumber: "101", amount: 1200, date: "2025-11-01" },
-    // { tenantName: "Jane Smith", unitNumber: "102", amount: 1500, date: "2025-11-03" },
-  ];
+export default function DashboardPayments({ onViewAll, refreshCounter }) {
+  const [duePayments, setDuePayments] = useState([]);
+
+  useEffect(() => {
+    const fetchDuePayments = async () => {
+      try {
+        const allPayments = await fetchAllPayments();
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const filtered = allPayments.filter((payment) => {
+          const owedAmount = parseFloat(payment.OwedAmount || 0);
+          if (owedAmount <= 0) return false; // skip fully paid
+
+          const dueDate = new Date(payment.DueDate);
+          dueDate.setHours(0, 0, 0, 0);
+
+          // Calculate grace period (7 days)
+          const gracePeriodDate = new Date(dueDate);
+          gracePeriodDate.setDate(gracePeriodDate.getDate() + 7);
+
+          // Check if payment is due or overdue
+          const isOverdue = today > gracePeriodDate;
+          const isCurrentMonthDue =
+            dueDate.getFullYear() === today.getFullYear() &&
+            dueDate.getMonth() === today.getMonth();
+
+          // Show payments that are either current month due or overdue
+          return isCurrentMonthDue || isOverdue;
+        });
+
+        setDuePayments(filtered);
+      } catch (error) {
+        console.error("Error fetching payments:", error);
+      }
+    };
+
+    fetchDuePayments();
+  }, [refreshCounter]);
 
   return (
-    // Section wrapper with accessible labeling
     <section
       className="dashboard-payments"
       aria-labelledby="dashboard-payments-heading"
     >
-      {/* Heading for the section */}
-      <h2 id="dashboard-payments-heading">Recent Payments</h2>
+      <h2 id="dashboard-payments-heading">Due / Overdue Payments</h2>
 
-      {/* Conditional rendering: if there are payments, show table; else show message */}
-      {recentPayments.length > 0 ? (
+      {duePayments.length > 0 ? (
         <table className="payments-table">
           <thead>
             <tr>
               <th>Tenant Name</th>
-              <th>Unit #</th>
-              <th>Amount</th>
-              <th>Payment Date</th>
+              <th>Amount Due</th>
+              <th>Owed Amount</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
-            {/* Show only the first 2 latest payments */}
-            {recentPayments.slice(0, 2).map((payment, index) => (
-              <tr key={index}>
-                <td>{payment.tenantName}</td>
-                <td>{payment.unitNumber}</td>
-                <td>${payment.amount}</td>
-                <td>{payment.date}</td>
-              </tr>
-            ))}
+            {duePayments.map((payment, index) => {
+              const owedAmount = parseFloat(payment.OwedAmount || 0);
+              const roundedOwed = owedAmount.toFixed(2);
+              const amountDue = parseFloat(payment.AmountDue || 0).toFixed(2);
+
+              const dueDate = new Date(payment.DueDate);
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
+
+              // Calculate grace period
+              const graceDate = new Date(dueDate);
+              graceDate.setDate(graceDate.getDate() + 7);
+
+              const status =
+                owedAmount > 0
+                  ? today > graceDate
+                    ? "Overdue"
+                    : "Due"
+                  : "Paid";
+
+              return (
+                <tr key={index}>
+                  <td>{payment.TenantName}</td>
+                  <td>${amountDue}</td>
+                  <td style={{ color: owedAmount > 0 ? "red" : "inherit" }}>
+                    ${roundedOwed}
+                  </td>
+                  <td>{status}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       ) : (
-        // Message when there are no payments
-        <p>No payments present</p>
+        <p>No payments currently due</p>
       )}
 
-      {/* "View All" link to trigger parent function */}
       <a
         href="#"
         className="view-all-link"
         onClick={(e) => {
-          e.preventDefault(); // Prevent default link behavior
-          if (onViewAll) onViewAll(); // Call prop function if provided
+          e.preventDefault();
+          if (onViewAll) onViewAll("Payments");
         }}
       >
         View All
