@@ -1,10 +1,12 @@
-// src/utils/tenantHelperFunctions.js
+// src/utils/tenantHelperFunctions.jsx
 import {
   fetchTenants,
   saveTenantToSheet,
   updateTenant,
   deleteTenant,
 } from "../services/tenantService.js";
+import { prepopulateDuePayments } from "./duePaymentsHelperFunctions";
+import { getUnitByNumber } from "./UnitsHelperFunctions";
 
 /**
  * Fetch all tenants from SheetDB
@@ -51,6 +53,7 @@ export function getTenantByID(tenants, tenantID) {
 
 /**
  * Add tenant
+ * Automatically fetches rent from unit and prepopulates due payments
  */
 export async function addTenant(tenantData) {
   const payload = {
@@ -58,8 +61,19 @@ export async function addTenant(tenantData) {
     TenantID: `T-${Math.floor(1000 + Math.random() * 9000)}`,
     Timestamp: new Date().toISOString(),
   };
+
   const success = await saveTenantToSheet(payload);
-  if (success) return payload;
+  if (success) {
+    // Fetch rent from unit tab
+    const unit = await getUnitByNumber(payload.Unit);
+    const rentAmount = unit ? parseFloat(unit.Rent) : 0;
+
+    // Prepopulate due payments for the lease period
+    await prepopulateDuePayments(payload, rentAmount);
+
+    return payload;
+  }
+
   throw new Error("Failed to add tenant.");
 }
 
@@ -68,9 +82,7 @@ export async function addTenant(tenantData) {
  */
 export async function editTenant(tenantID, updatedData) {
   try {
-    const updatedTenant = await updateTenant(tenantID, {
-      ...updatedData,
-    });
+    const updatedTenant = await updateTenant(tenantID, { ...updatedData });
     return updatedTenant;
   } catch (err) {
     console.error(err);
