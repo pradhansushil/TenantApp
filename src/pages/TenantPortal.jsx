@@ -1,85 +1,75 @@
-import { useState } from "react";
+// src/components/tenant/TenantPortal.jsx
+import { useState, useEffect } from "react";
+import {
+  fetchAllPayments,
+  updateDuePayment,
+} from "../services/duePaymentService";
 
-export default function TenantPortal() {
-  const [showPayments, setShowPayments] = useState(false);
-  const [showMaintenance, setShowMaintenance] = useState(false);
+export default function TenantPortal({ tenant }) {
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentAmount, setPaymentAmount] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("IPS");
+  const [paymentStatus, setPaymentStatus] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentDue, setCurrentDue] = useState(null);
 
-  // Form state for maintenance request
-  const [formData, setFormData] = useState({
-    unit: "",
-    tenantName: "",
-    description: "",
-  });
-
-  const [statusMessage, setStatusMessage] = useState("");
-  const [isSending, setIsSending] = useState(false);
-
-  // SheetDB API URL
-  const SHEETDB_URL = "https://sheetdb.io/api/v1/trs7w2oteqnyc";
-
-  const togglePayments = () => setShowPayments(!showPayments);
-  const toggleMaintenance = () => setShowMaintenance(!showMaintenance);
-
-  // Update form inputs
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const togglePaymentModal = () => {
+    setShowPaymentModal(!showPaymentModal);
+    setPaymentAmount("");
+    setPaymentMethod("IPS");
+    setPaymentStatus("");
   };
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
+  // Fetch current due payment for this tenant
+  useEffect(() => {
+    const getTenantDue = async () => {
+      try {
+        const allPayments = await fetchAllPayments();
+        const tenantDue = allPayments.find(
+          (p) => p.TenantID === tenant.TenantID && parseFloat(p.OwedAmount) > 0
+        );
+        setCurrentDue(tenantDue || null);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    getTenantDue();
+  }, [tenant.TenantID]);
+
+  const handlePaymentSubmit = async (e) => {
     e.preventDefault();
-    setStatusMessage("Sending...");
-    setIsSending(true);
+    setIsSubmitting(true);
+    setPaymentStatus("Processing payment...");
 
     try {
-      const now = new Date();
-      const formattedDate = now.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      });
-      const timestamp = now.toISOString(); // Full timestamp for sorting
+      if (!currentDue) throw new Error("No due payment found for this tenant.");
 
-      const payload = {
-        data: {
-          Type_Maintenance: "Maintenance",
-          MaintenanceID: `M-${Date.now()}`,
-          TenantName: formData.tenantName,
-          Unit_Maintenance: formData.unit,
-          Description: formData.description,
-          DateSubmitted: formattedDate, // for display
-          Timestamp: timestamp, // for sorting
-        },
+      const amount = parseFloat(paymentAmount);
+      if (isNaN(amount) || amount <= 0)
+        throw new Error("Enter a valid payment amount.");
+
+      const owedBefore = parseFloat(currentDue.OwedAmount || 0);
+      const newOwed = Math.max(0, owedBefore - amount);
+
+      const updatedData = {
+        OwedAmount: newOwed.toFixed(2),
+        Status: newOwed === 0 ? "Paid" : "Pending",
       };
 
-      const res = await fetch(SHEETDB_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      // Update Google Sheets DuePayments tab
+      await updateDuePayment(currentDue.DueID, updatedData);
 
-      if (!res.ok) throw new Error("Network response not OK");
-
-      const data = await res.json();
-
-      if (data.created) {
-        setStatusMessage(
-          "We received your maintenance request and will get back to you soon. ✅"
-        );
-        setFormData({ unit: "", tenantName: "", description: "" });
-      } else {
-        setStatusMessage(
-          "Oops! Something went wrong. Please try submitting your request again."
-        );
-      }
-    } catch (err) {
-      setStatusMessage(
-        "Oops! Something went wrong with the network. Please check your internet and try again."
+      setPaymentStatus(
+        `Payment of $${amount.toFixed(2)} recorded successfully!`
       );
+      setPaymentAmount("");
+      setShowPaymentModal(false);
+      setCurrentDue({ ...currentDue, ...updatedData });
+    } catch (err) {
       console.error(err);
+      setPaymentStatus(err.message || "Error processing payment.");
     } finally {
-      setIsSending(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -87,89 +77,108 @@ export default function TenantPortal() {
     <main>
       <h1>Tenant Portal</h1>
 
-      {/* Payments Section */}
+      {currentDue ? (
+        <p>
+          Current owed amount:{" "}
+          <span
+            style={{
+              color: parseFloat(currentDue.OwedAmount) > 0 ? "red" : "inherit",
+            }}
+          >
+            ${parseFloat(currentDue.OwedAmount).toFixed(2)}
+          </span>
+        </p>
+      ) : (
+        <p>No pending payments.</p>
+      )}
+
       <section>
-        <button onClick={togglePayments}>Payments</button>
-        {showPayments && (
-          <div>
-            <p>
-              <strong>
-                To pay your rent, click the link below. Include your Unit # in
-                the notes.
-              </strong>
-            </p>
-            <a
-              href="https://esewa.com/payment-placeholder"
-              target="_blank"
-              rel="noopener noreferrer"
+        <button onClick={togglePaymentModal}>Make Payment</button>
+
+        {showPaymentModal && (
+          <div
+            className="modal-overlay"
+            onClick={togglePaymentModal}
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundColor: "rgba(0,0,0,0.5)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 999,
+            }}
+          >
+            <div
+              className="modal-content"
+              onClick={(e) => e.stopPropagation()}
               style={{
-                display: "inline-block",
-                marginTop: "10px",
-                color: "blue",
+                backgroundColor: "white",
+                padding: "20px",
+                borderRadius: "8px",
+                width: "350px",
               }}
             >
-              Pay via eSewa / IPS
-            </a>
-          </div>
-        )}
-      </section>
+              <h2>Enter Payment</h2>
+              <form onSubmit={handlePaymentSubmit}>
+                <div style={{ marginBottom: "10px" }}>
+                  <label>Unit Number</label>
+                  <input
+                    type="text"
+                    value={tenant.Unit}
+                    readOnly
+                    style={{ width: "100%" }}
+                  />
+                </div>
 
-      {/* Maintenance Requests Section */}
-      <section>
-        <button onClick={toggleMaintenance}>Maintenance Requests</button>
-        {showMaintenance && (
-          <section aria-labelledby="maintenance-heading">
-            <h2 id="maintenance-heading">Submit a Maintenance Request</h2>
+                <div style={{ marginBottom: "10px" }}>
+                  <label>Payment Amount</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={paymentAmount}
+                    onChange={(e) => setPaymentAmount(e.target.value)}
+                    required
+                    style={{ width: "100%" }}
+                  />
+                </div>
 
-            <form onSubmit={handleSubmit}>
-              <div>
-                <label htmlFor="unit">Unit # (required):</label>
-                <input
-                  type="text"
-                  id="unit"
-                  name="unit"
-                  value={formData.unit}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+                <div style={{ marginBottom: "10px" }}>
+                  <label>Payment Method</label>
+                  <select
+                    value={paymentMethod}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    style={{ width: "100%" }}
+                  >
+                    <option value="IPS">IPS</option>
+                    <option value="eSewa">eSewa</option>
+                    <option value="Bank">Bank</option>
+                  </select>
+                </div>
 
-              <div>
-                <label htmlFor="tenantName">Tenant Name (required):</label>
-                <input
-                  type="text"
-                  id="tenantName"
-                  name="tenantName"
-                  value={formData.tenantName}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  style={{ marginRight: "10px" }}
+                >
+                  {isSubmitting ? "Processing..." : "Submit Payment"}
+                </button>
+                <button type="button" onClick={togglePaymentModal}>
+                  Cancel
+                </button>
+              </form>
 
-              <div>
-                <label htmlFor="description">Description of the issue:</label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  rows="4"
-                  style={{ width: "100%" }}
-                />
-              </div>
-
-              <button type="submit" disabled={isSending}>
-                {isSending ? "Sending..." : "Submit Request"}
-              </button>
-            </form>
-
-            <div
-              aria-live="polite"
-              style={{ marginTop: "8px", fontWeight: "bold" }}
-            >
-              {statusMessage}
+              {paymentStatus && (
+                <p style={{ marginTop: "10px", fontWeight: "bold" }}>
+                  {paymentStatus}
+                </p>
+              )}
             </div>
-          </section>
+          </div>
         )}
       </section>
     </main>
