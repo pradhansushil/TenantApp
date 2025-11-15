@@ -1,6 +1,6 @@
 // src/components/admin/TenantModal.jsx
 import { useState, useEffect } from "react";
-import { addTenant, editTenant } from "../../../utils/tenantHelperFunctions";
+import { addTenant } from "../../../utils/tenantHelperFunctions";
 
 export default function TenantModal({
   isOpen,
@@ -12,6 +12,8 @@ export default function TenantModal({
   const [unit, setUnit] = useState("");
   const [phone, setPhone] = useState("");
   const [moveInDate, setMoveInDate] = useState("");
+  const [periodStart, setPeriodStart] = useState("");
+  const [periodEnd, setPeriodEnd] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetForm = () => {
@@ -19,6 +21,8 @@ export default function TenantModal({
     setUnit("");
     setPhone("");
     setMoveInDate("");
+    setPeriodStart("");
+    setPeriodEnd("");
   };
 
   useEffect(() => {
@@ -26,11 +30,14 @@ export default function TenantModal({
       resetForm();
       return;
     }
+
     if (tenantData) {
       setName(tenantData.Name || "");
-      setUnit(tenantData.Unit_Tenant || "");
+      setUnit(tenantData.Unit || tenantData.Unit_Tenant || "");
       setPhone(tenantData.Phone || "");
       setMoveInDate(tenantData.MoveInDate || "");
+      setPeriodStart(tenantData.PeriodStart || "");
+      setPeriodEnd(tenantData.PeriodEnd || "");
     } else {
       resetForm();
     }
@@ -53,18 +60,23 @@ export default function TenantModal({
 
     const tenantPayload = {
       Name: name,
-      Unit_Tenant: unit,
+      Unit: unit,
       Phone: phone,
       MoveInDate: moveInDate,
+      PeriodStart: periodStart,
+      PeriodEnd: periodEnd,
     };
 
     try {
       let savedTenant;
+
       if (tenantData?.TenantID) {
-        savedTenant = await editTenant(tenantData.TenantID, tenantPayload);
+        // (Optional) edit tenant logic if you add it later
       } else {
+        // Add tenant (this automatically triggers prepopulateDuePayments)
         savedTenant = await addTenant(tenantPayload);
       }
+
       onSubmit?.(savedTenant);
       resetForm();
       onClose();
@@ -96,6 +108,7 @@ export default function TenantModal({
               required
             />
           </div>
+
           <div>
             <label>Unit Number</label>
             <input
@@ -104,6 +117,7 @@ export default function TenantModal({
               onChange={(e) => setUnit(e.target.value)}
             />
           </div>
+
           <div>
             <label>Phone Number</label>
             <input
@@ -112,12 +126,31 @@ export default function TenantModal({
               onChange={(e) => setPhone(e.target.value)}
             />
           </div>
+
           <div>
             <label>Move-in Date</label>
             <input
               type="date"
               value={moveInDate}
               onChange={(e) => setMoveInDate(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label>Lease Period Start</label>
+            <input
+              type="date"
+              value={periodStart}
+              onChange={(e) => setPeriodStart(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label>Lease Period End</label>
+            <input
+              type="date"
+              value={periodEnd}
+              onChange={(e) => setPeriodEnd(e.target.value)}
             />
           </div>
 
