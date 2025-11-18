@@ -56,8 +56,18 @@ export function getTenantByID(tenants, tenantID) {
  * Automatically fetches rent from unit and prepopulates due payments
  */
 export async function addTenant(tenantData) {
+  // Convert dates from YYYY-MM-DD to M/D/YYYY
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr + "T00:00:00"); // Prevent timezone issues
+    return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
+  };
+
   const payload = {
     ...tenantData,
+    MoveInDate: formatDate(tenantData.MoveInDate),
+    PeriodStart: formatDate(tenantData.PeriodStart),
+    PeriodEnd: formatDate(tenantData.PeriodEnd),
     TenantID: `T-${Math.floor(1000 + Math.random() * 9000)}`,
     Timestamp: new Date().toISOString(),
   };
