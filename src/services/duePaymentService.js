@@ -13,19 +13,7 @@ export async function fetchAllPayments() {
     }
 
     const data = await response.json();
-
-    // Calculate OwedAmount for each tenant
-    const processedData = data.map((payment) => {
-      const due = parseFloat(payment.DueAmount) || 0;
-      const paid = parseFloat(payment.PaidAmount) || 0;
-
-      return {
-        ...payment,
-        OwedAmount: Math.max(0, parseFloat((due - paid).toFixed(2))),
-      };
-    });
-
-    return processedData;
+    return data;
   } catch (error) {
     console.error("fetchAllPayments error:", error);
     return [];
