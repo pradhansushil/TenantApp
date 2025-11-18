@@ -1,40 +1,30 @@
 // src/components/tenant/TenantPortal.jsx
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { addPayment } from "../services/paymentsService";
 import {
   fetchAllPayments,
   updateDuePayment,
 } from "../services/duePaymentService";
 
-export default function TenantPortal({ tenant }) {
+export default function TenantPortal() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [tenantName, setTenantName] = useState("");
+  const [unitNumber, setUnitNumber] = useState("");
   const [paymentAmount, setPaymentAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("IPS");
+  const [paymentReference, setPaymentReference] = useState("");
   const [paymentStatus, setPaymentStatus] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentDue, setCurrentDue] = useState(null);
 
   const togglePaymentModal = () => {
     setShowPaymentModal(!showPaymentModal);
+    setTenantName("");
+    setUnitNumber("");
     setPaymentAmount("");
     setPaymentMethod("IPS");
+    setPaymentReference("");
     setPaymentStatus("");
   };
-
-  // Fetch current due payment for this tenant
-  useEffect(() => {
-    const getTenantDue = async () => {
-      try {
-        const allPayments = await fetchAllPayments();
-        const tenantDue = allPayments.find(
-          (p) => p.TenantID === tenant.TenantID && parseFloat(p.OwedAmount) > 0
-        );
-        setCurrentDue(tenantDue || null);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    getTenantDue();
-  }, [tenant.TenantID]);
 
   const handlePaymentSubmit = async (e) => {
     e.preventDefault();
@@ -42,29 +32,81 @@ export default function TenantPortal({ tenant }) {
     setPaymentStatus("Processing payment...");
 
     try {
-      if (!currentDue) throw new Error("No due payment found for this tenant.");
+      // Validate inputs
+      if (!tenantName.trim()) throw new Error("Please enter your name.");
+      if (!unitNumber.trim()) throw new Error("Please enter your unit number.");
 
       const amount = parseFloat(paymentAmount);
-      if (isNaN(amount) || amount <= 0)
+      if (isNaN(amount) || amount <= 0) {
         throw new Error("Enter a valid payment amount.");
+      }
 
-      const owedBefore = parseFloat(currentDue.OwedAmount || 0);
+      // Get all due payments to find this tenant's current month payment
+      const allDuePayments = await fetchAllPayments();
+      console.log(
+        "Unit 101 payments:",
+        allDuePayments.filter((p) => p.UnitNumber === "101")
+      );
+      console.log(
+        "With OwedAmount > 0:",
+        allDuePayments.filter(
+          (p) => p.UnitNumber === "101" && parseFloat(p.OwedAmount || 0) > 0
+        )
+      );
+
+      // Find the current month's payment (earliest unpaid)
+      const tenantPayments = allDuePayments.filter(
+        (p) =>
+          p.UnitNumber === unitNumber.trim() &&
+          parseFloat(p.OwedAmount || 0) > 0
+      );
+
+      if (tenantPayments.length === 0) {
+        throw new Error("No unpaid balance found for this unit number.");
+      }
+
+      // Sort by due date and get the earliest one
+      tenantPayments.sort((a, b) => new Date(a.DueDate) - new Date(b.DueDate));
+      const tenantDue = tenantPayments[0];
+
+      const tenantID = tenantDue.TenantID;
+
+      // Format today's date as M/D/YYYY
+      const today = new Date();
+      const paymentDate = `${
+        today.getMonth() + 1
+      }/${today.getDate()}/${today.getFullYear()}`;
+
+      // 1️⃣ Add payment to Payments tab
+      const paymentPayload = {
+        PaymentID: `P-${Date.now()}`,
+        TenantID: tenantID,
+        UnitNumber: unitNumber.trim(),
+        PaymentDate: paymentDate,
+        Amount: amount.toFixed(2),
+        PaymentMethod: paymentMethod,
+        Reference: paymentReference.trim() || "",
+      };
+
+      await addPayment(paymentPayload);
+
+      // 2️⃣ Update DuePayments tab
+      const owedBefore = parseFloat(tenantDue.OwedAmount || 0);
       const newOwed = Math.max(0, owedBefore - amount);
-
       const updatedData = {
         OwedAmount: newOwed.toFixed(2),
         Status: newOwed === 0 ? "Paid" : "Pending",
       };
 
-      // Update Google Sheets DuePayments tab
-      await updateDuePayment(currentDue.DueID, updatedData);
+      await updateDuePayment(tenantDue.DueID, updatedData);
 
       setPaymentStatus(
         `Payment of $${amount.toFixed(2)} recorded successfully!`
       );
-      setPaymentAmount("");
-      setShowPaymentModal(false);
-      setCurrentDue({ ...currentDue, ...updatedData });
+
+      setTimeout(() => {
+        togglePaymentModal();
+      }, 2000);
     } catch (err) {
       console.error(err);
       setPaymentStatus(err.message || "Error processing payment.");
@@ -77,23 +119,15 @@ export default function TenantPortal({ tenant }) {
     <main>
       <h1>Tenant Portal</h1>
 
-      {currentDue ? (
-        <p>
-          Current owed amount:{" "}
-          <span
-            style={{
-              color: parseFloat(currentDue.OwedAmount) > 0 ? "red" : "inherit",
-            }}
-          >
-            ${parseFloat(currentDue.OwedAmount).toFixed(2)}
-          </span>
-        </p>
-      ) : (
-        <p>No pending payments.</p>
-      )}
-
       <section>
         <button onClick={togglePaymentModal}>Make Payment</button>
+        <button
+          onClick={() =>
+            alert("Maintenance request functionality will be implemented soon.")
+          }
+        >
+          Make Maintenance Request
+        </button>
 
         {showPaymentModal && (
           <div
@@ -125,12 +159,22 @@ export default function TenantPortal({ tenant }) {
               <h2>Enter Payment</h2>
               <form onSubmit={handlePaymentSubmit}>
                 <div style={{ marginBottom: "10px" }}>
+                  <label>Your Name</label>
+                  <input
+                    type="text"
+                    value={tenantName}
+                    onChange={(e) => setTenantName(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div style={{ marginBottom: "10px" }}>
                   <label>Unit Number</label>
                   <input
                     type="text"
-                    value={tenant.Unit}
-                    readOnly
-                    style={{ width: "100%" }}
+                    value={unitNumber}
+                    onChange={(e) => setUnitNumber(e.target.value)}
+                    required
                   />
                 </div>
 
@@ -143,7 +187,6 @@ export default function TenantPortal({ tenant }) {
                     value={paymentAmount}
                     onChange={(e) => setPaymentAmount(e.target.value)}
                     required
-                    style={{ width: "100%" }}
                   />
                 </div>
 
@@ -152,7 +195,6 @@ export default function TenantPortal({ tenant }) {
                   <select
                     value={paymentMethod}
                     onChange={(e) => setPaymentMethod(e.target.value)}
-                    style={{ width: "100%" }}
                   >
                     <option value="IPS">IPS</option>
                     <option value="eSewa">eSewa</option>
@@ -160,11 +202,16 @@ export default function TenantPortal({ tenant }) {
                   </select>
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  style={{ marginRight: "10px" }}
-                >
+                <div style={{ marginBottom: "10px" }}>
+                  <label>Reference / Notes</label>
+                  <input
+                    type="text"
+                    value={paymentReference}
+                    onChange={(e) => setPaymentReference(e.target.value)}
+                  />
+                </div>
+
+                <button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? "Processing..." : "Submit Payment"}
                 </button>
                 <button type="button" onClick={togglePaymentModal}>
@@ -172,11 +219,7 @@ export default function TenantPortal({ tenant }) {
                 </button>
               </form>
 
-              {paymentStatus && (
-                <p style={{ marginTop: "10px", fontWeight: "bold" }}>
-                  {paymentStatus}
-                </p>
-              )}
+              {paymentStatus && <p>{paymentStatus}</p>}
             </div>
           </div>
         )}
