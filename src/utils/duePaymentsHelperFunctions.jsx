@@ -34,8 +34,14 @@ export async function prepopulateDuePayments(tenant, rentAmount) {
     return;
   }
 
-  const startDate = new Date(tenant.PeriodStart);
-  const endDate = new Date(tenant.PeriodEnd);
+  // Parse M/D/YYYY format
+  const parseDate = (dateStr) => {
+    const [month, day, year] = dateStr.split("/");
+    return new Date(year, month - 1, day);
+  };
+
+  const startDate = parseDate(tenant.PeriodStart);
+  const endDate = parseDate(tenant.PeriodEnd);
 
   const payments = [];
 
@@ -49,12 +55,18 @@ export async function prepopulateDuePayments(tenant, rentAmount) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     if (dueDate >= today) {
+      // Format date as text to prevent Excel conversion: 'YYYY-MM-DD
+      const month = dueDate.getMonth() + 1;
+      const day = dueDate.getDate();
+      const year = dueDate.getFullYear();
+      const formattedDate = `'${month}/${day}/${year}`;
+
       const duePayment = {
         DueID: `D-${Date.now()}-${Math.floor(Math.random() * 9000)}`,
         TenantID: tenant.TenantID,
         TenantName: tenant.Name,
         UnitNumber: tenant.Unit,
-        DueDate: dueDate.toISOString().split("T")[0], // yyyy-mm-dd
+        DueDate: formattedDate,
         AmountDue: parseFloat(rentAmount).toFixed(2),
         OwedAmount: parseFloat(rentAmount).toFixed(2),
         Status: "Pending",
