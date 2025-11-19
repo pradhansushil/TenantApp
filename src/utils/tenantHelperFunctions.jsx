@@ -1,4 +1,3 @@
-// src/utils/tenantHelperFunctions.jsx
 import {
   fetchTenants,
   saveTenantToSheet,
@@ -7,6 +6,7 @@ import {
 } from "../services/tenantService.js";
 import { prepopulateDuePayments } from "./duePaymentsHelperFunctions";
 import { getUnitByNumber } from "./UnitsHelperFunctions";
+import { updateUnit } from "../services/unitService.js"; // Needed for auto-updating the Units tab
 
 /**
  * Fetch all tenants from SheetDB
@@ -24,9 +24,6 @@ export async function getAllTenants() {
 
 /**
  * Sort tenants
- * @param {Array} tenants
- * @param {string} filterType
- * @returns {Array} sorted tenants
  */
 export function sortTenants(tenants, filterType) {
   const sorted = [...tenants];
@@ -53,14 +50,22 @@ export function getTenantByID(tenants, tenantID) {
 
 /**
  * Add tenant
- * Automatically fetches rent from unit and prepopulates due payments
+ * - Formats dates as MM/DD/YYYY
+ * - Saves tenant
+ * - Prepopulates due payments
+ * - Updates unit status (Vacant → Occupied)
  */
 export async function addTenant(tenantData) {
-  // Convert dates from YYYY-MM-DD to M/D/YYYY
+  // Convert dates from YYYY-MM-DD → MM/DD/YYYY
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
-    const d = new Date(dateStr + "T00:00:00"); // Prevent timezone issues
-    return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
+    const d = new Date(dateStr + "T00:00:00");
+
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    const yyyy = d.getFullYear();
+
+    return `${mm}/${dd}/${yyyy}`;
   };
 
   const payload = {
@@ -72,14 +77,40 @@ export async function addTenant(tenantData) {
     Timestamp: new Date().toISOString(),
   };
 
+  // Save tenant to Google Sheets
   const success = await saveTenantToSheet(payload);
+
   if (success) {
-    // Fetch rent from unit tab
+    // ------------------------------------------
+    // 1. GET UNIT INFO
+    // ------------------------------------------
     const unit = await getUnitByNumber(payload.Unit);
     const rentAmount = unit ? parseFloat(unit.Rent) : 0;
 
-    // Prepopulate due payments for the lease period
+    // ------------------------------------------
+    // 2. PREPOPULATE DUE PAYMENTS
+    // ------------------------------------------
     await prepopulateDuePayments(payload, rentAmount);
+
+    // ------------------------------------------
+    // 3. UPDATE UNIT STATUS
+    // ------------------------------------------
+    try {
+      if (unit) {
+        const updatedUnit = {
+          ...unit,
+          Status: "Occupied",
+          TenantName: payload.FullName || payload.Name || "",
+          MoveInDate: payload.MoveInDate, // Already MM/DD/YYYY
+        };
+
+        await updateUnit(updatedUnit); // MUST include UnitID
+      } else {
+        console.warn("addTenant: Unit not found; skipping Units update.");
+      }
+    } catch (err) {
+      console.error("Failed updating unit after adding tenant:", err);
+    }
 
     return payload;
   }
