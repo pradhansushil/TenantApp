@@ -43,7 +43,7 @@ export default function RemoveTenantModal({ isOpen, onClose }) {
       });
 
       if (response.ok) {
-        alert("Tenant removed successfully!");
+        onSuccess?.();
         setTenantID("");
         setFullName("");
         onClose();
