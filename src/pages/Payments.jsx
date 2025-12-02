@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import PaymentFilters from "../components/PaymentFilters";
 
 const SHEETDB_URL = "https://sheetdb.io/api/v1/trs7w2oteqnyc";
 
@@ -6,6 +7,14 @@ export default function Payments() {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Filters
+  const [searchTenantID, setSearchTenantID] = useState("");
+  const [searchUnit, setSearchUnit] = useState("");
+  const [searchReference, setSearchReference] = useState("");
+  const [paymentMethodFilter, setPaymentMethodFilter] = useState("");
+  const [paymentFrom, setPaymentFrom] = useState("");
+  const [paymentTo, setPaymentTo] = useState("");
 
   useEffect(() => {
     fetchPayments();
@@ -31,6 +40,38 @@ export default function Payments() {
     }
   };
 
+  // Filter payments before rendering
+  const filteredPayments = payments
+    .filter((p) => !searchTenantID || p.TenantID.includes(searchTenantID))
+    .filter((p) => !searchUnit || p.UnitNumber.includes(searchUnit))
+    .filter(
+      (p) =>
+        !searchReference ||
+        (p.Reference || "")
+          .toLowerCase()
+          .includes(searchReference.toLowerCase())
+    )
+    .filter(
+      (p) => !paymentMethodFilter || p.PaymentMethod === paymentMethodFilter
+    )
+    .filter((p) => {
+      if (!paymentFrom && !paymentTo) return true;
+      const paymentDate = new Date(p.PaymentDate);
+      if (paymentFrom && paymentDate < new Date(paymentFrom)) return false;
+      if (paymentTo && paymentDate > new Date(paymentTo)) return false;
+      return true;
+    });
+
+  // Reset only filters (does not clear table data)
+  const handleResetFilters = () => {
+    setSearchTenantID("");
+    setSearchUnit("");
+    setSearchReference("");
+    setPaymentMethodFilter("");
+    setPaymentFrom("");
+    setPaymentTo("");
+  };
+
   if (loading) {
     return <div>Loading payments...</div>;
   }
@@ -43,10 +84,34 @@ export default function Payments() {
     <div>
       <h1>All Payments</h1>
 
-      {payments.length === 0 ? (
-        <p>No payments yet</p>
+      {/* Filters */}
+      <PaymentFilters
+        searchTenantID={searchTenantID}
+        onSearchTenantIDChange={(e) => setSearchTenantID(e.target.value)}
+        searchUnit={searchUnit}
+        onSearchUnitChange={(e) => setSearchUnit(e.target.value)}
+        searchReference={searchReference}
+        onSearchReferenceChange={(e) => setSearchReference(e.target.value)}
+        paymentMethodFilter={paymentMethodFilter}
+        onPaymentMethodFilterChange={(e) =>
+          setPaymentMethodFilter(e.target.value)
+        }
+        paymentFrom={paymentFrom}
+        onPaymentFromChange={(e) => setPaymentFrom(e.target.value)}
+        paymentTo={paymentTo}
+        onPaymentToChange={(e) => setPaymentTo(e.target.value)}
+      />
+
+      {/* Reset Filters button */}
+      <button onClick={handleResetFilters} style={{ marginBottom: "1rem" }}>
+        Reset Filters
+      </button>
+
+      {/* Payments Table */}
+      {filteredPayments.length === 0 ? (
+        <p>No payments found.</p>
       ) : (
-        <table>
+        <table border="1" cellPadding="5">
           <thead>
             <tr>
               <th>Payment ID</th>
@@ -59,7 +124,7 @@ export default function Payments() {
             </tr>
           </thead>
           <tbody>
-            {payments.map((payment, index) => (
+            {filteredPayments.map((payment, index) => (
               <tr key={payment.PaymentID || index}>
                 <td>{payment.PaymentID}</td>
                 <td>{payment.TenantID}</td>
