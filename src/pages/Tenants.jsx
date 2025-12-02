@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import TenantModal from "../components/admin/dashboard/TenantModal";
+import Toast from "../components/Toasts";
+import ConfirmDialog from "../components/ConfirmDialog";
 import {
   getAllTenants,
   sortTenants,
@@ -16,6 +18,20 @@ export default function Tenants() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTenant, setEditingTenant] = useState(null);
   const [filterType, setFilterType] = useState("name");
+
+  // Toast state
+  const [toast, setToast] = useState({ message: "", type: "success" });
+
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [tenantToDelete, setTenantToDelete] = useState(null);
+
+  const showToast = (message, type = "success") => {
+    setToast({ message, type });
+  };
+
+  const clearToast = () => {
+    setToast({ message: "", type: "success" });
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -47,15 +63,29 @@ export default function Tenants() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (tenantID) => {
-    if (!window.confirm("Are you sure you want to delete this tenant?")) return;
+  const handleDelete = (tenantID) => {
+    setTenantToDelete(tenantID);
+    setIsConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
     try {
-      await removeTenant(tenantID);
-      const updated = tenants.filter((t) => t.TenantID !== tenantID);
+      await removeTenant(tenantToDelete);
+      const updated = tenants.filter((t) => t.TenantID !== tenantToDelete);
       setTenants(updated);
+      showToast("Tenant deleted successfully", "success");
     } catch (err) {
-      alert(err.message || "Failed to delete tenant.");
+      showToast(err.message || "Failed to delete tenant", "error");
+    } finally {
+      // Close dialog and clear the tenant to delete
+      setIsConfirmOpen(false);
+      setTenantToDelete(null);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setIsConfirmOpen(false);
+    setTenantToDelete(null);
   };
 
   const handleSubmit = async (savedTenant) => {
@@ -65,18 +95,26 @@ export default function Tenants() {
         t.TenantID === savedTenant.TenantID ? savedTenant : t
       );
       setTenants(updated);
+      showToast("Tenant updated successfully", "success");
     } else {
       // Added
       setTenants([savedTenant, ...tenants]);
+      showToast("Tenant added successfully", "success");
     }
+  };
+
+  // Handle errors from the modal (if submission fails)
+  const handleSubmitError = (errorMessage) => {
+    showToast(errorMessage || "Operation failed", "error");
   };
 
   if (loading) return <p>Loading tenants...</p>;
   if (error) return <p>{error}</p>;
-  if (!tenants.length) return <p>No tenants found.</p>;
 
   return (
     <div>
+      <Toast message={toast.message} type={toast.type} onClose={clearToast} />
+
       <h1>Tenant Management</h1>
       <button onClick={handleAddClick}>Add Tenant</button>
 
@@ -84,60 +122,69 @@ export default function Tenants() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleSubmit}
+        onError={handleSubmitError}
         tenantData={editingTenant}
       />
 
-      <div style={{ margin: "10px 0" }}>
-        <label>Sort by: </label>
-        <select
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value)}
-        >
-          <option value="name">Name (A → Z)</option>
-          <option value="moveInDate">Move-in Date (Newest → Oldest)</option>
-          <option value="unit">Unit Number</option>
-        </select>
-      </div>
+      <ConfirmDialog
+        isOpen={isConfirmOpen}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        title="Delete Tenant"
+        message="Are you sure you want to delete this tenant? This action cannot be undone."
+        confirmText="Yes, Delete"
+        cancelText="Cancel"
+      />
 
-      <table
-        border="1"
-        cellPadding="5"
-        style={{ width: "100%", borderCollapse: "collapse" }}
-      >
-        <thead>
-          <tr>
-            <th>TenantID</th>
-            <th>Name</th>
-            <th>Unit</th>
-            <th>MoveInDate</th>
-            <th>Phone</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredTenants.map((t) => (
-            <tr key={t.TenantID}>
-              <td>{t.TenantID}</td>
-              <td>{t.Name}</td>
-              <td>{t.Unit}</td>
-              <td>{t.MoveInDate}</td>
-              <td>{t.Phone}</td>
-              <td>
-                <a
-                  href="#"
-                  style={{ marginRight: "10px" }}
-                  onClick={() => handleEditClick(t)}
-                >
-                  Edit
-                </a>
-                <a href="#" onClick={() => handleDelete(t.TenantID)}>
-                  Delete
-                </a>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {tenants.length === 0 ? (
+        <p>No tenants found.</p>
+      ) : (
+        <>
+          <div>
+            <label>Sort by: </label>
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+            >
+              <option value="name">Name (A → Z)</option>
+              <option value="moveInDate">Move-in Date (Newest → Oldest)</option>
+              <option value="unit">Unit Number</option>
+            </select>
+          </div>
+
+          <table border="1" cellPadding="5">
+            <thead>
+              <tr>
+                <th>TenantID</th>
+                <th>Name</th>
+                <th>Unit</th>
+                <th>MoveInDate</th>
+                <th>Phone</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredTenants.map((t) => (
+                <tr key={t.TenantID}>
+                  <td>{t.TenantID}</td>
+                  <td>{t.Name}</td>
+                  <td>{t.Unit}</td>
+                  <td>{t.MoveInDate}</td>
+                  <td>{t.Phone}</td>
+                  <td>
+                    <a href="#" onClick={() => handleEditClick(t)}>
+                      Edit
+                    </a>
+                    <a href="#" onClick={() => handleDelete(t.TenantID)}>
+                      Delete
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
     </div>
   );
 }
