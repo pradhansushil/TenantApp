@@ -50,22 +50,22 @@ export function getTenantByID(tenants, tenantID) {
 
 /**
  * Add tenant
- * - Formats dates as MM/DD/YYYY
+ * - Formats dates as 'M/D/YYYY (with leading apostrophe)
  * - Saves tenant
  * - Prepopulates due payments
  * - Updates unit status (Vacant → Occupied)
  */
 export async function addTenant(tenantData) {
-  // Convert dates from YYYY-MM-DD → MM/DD/YYYY
+  // Convert dates from YYYY-MM-DD → 'M/D/YYYY
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
     const d = new Date(dateStr + "T00:00:00");
 
-    const mm = String(d.getMonth() + 1).padStart(2, "0");
-    const dd = String(d.getDate()).padStart(2, "0");
+    const m = d.getMonth() + 1; // No leading zero
+    const day = d.getDate(); // No leading zero
     const yyyy = d.getFullYear();
 
-    return `${mm}/${dd}/${yyyy}`;
+    return `'${m}/${day}/${yyyy}`; // Leading apostrophe
   };
 
   const payload = {
@@ -101,7 +101,7 @@ export async function addTenant(tenantData) {
           ...unit,
           Status: "Occupied",
           TenantName: payload.FullName || payload.Name || "",
-          MoveInDate: payload.MoveInDate, // Already MM/DD/YYYY
+          MoveInDate: payload.MoveInDate, // Already 'M/D/YYYY format
         };
 
         await updateUnit(updatedUnit); // MUST include UnitID
