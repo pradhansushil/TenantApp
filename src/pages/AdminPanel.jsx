@@ -14,7 +14,7 @@ import Dashboard from "./Dashboard";
 import Tenants from "./Tenants";
 import Units from "./Units";
 import Payments from "./Payments";
-// import Maintenance from "./Maintenance";
+import Maintenance from "./Maintenance";
 
 export default function AdminPanel() {
   const [user, setUser] = useState(null);
@@ -68,7 +68,7 @@ export default function AdminPanel() {
             <Route path="tenants" element={<Tenants />} />
             <Route path="units" element={<Units />} />
             <Route path="payments" element={<Payments />} />
-            {/* <Route path="maintenance" element={<Maintenance />} /> */}
+            <Route path="maintenance" element={<Maintenance />} />
           </Routes>
         </main>
       </div>
