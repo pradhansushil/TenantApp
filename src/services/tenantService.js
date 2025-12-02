@@ -1,5 +1,3 @@
-// src/services/sheetdb.js
-
 const SHEETDB_URL = "https://sheetdb.io/api/v1/trs7w2oteqnyc";
 const SHEET_NAME = "Tenants";
 
@@ -24,7 +22,7 @@ export async function saveTenantToSheet(tenantData) {
 
     return true; // success
   } catch (error) {
-    alert("There was an error saving the tenant. Please try again.");
+    console.error("Error saving tenant:", error);
     return false; // failure
   }
 }
