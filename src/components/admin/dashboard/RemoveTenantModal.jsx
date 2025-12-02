@@ -1,14 +1,23 @@
 import { useState } from "react";
+import ConfirmDialog from "../../ConfirmDialog";
 
-export default function RemoveTenantModal({ isOpen, onClose }) {
+export default function RemoveTenantModal({
+  isOpen,
+  onClose,
+  onSuccess,
+  onError,
+}) {
   const [tenantID, setTenantID] = useState("");
   const [fullName, setFullName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [pendingRemoval, setPendingRemoval] = useState(null);
+
   if (!isOpen) return null;
 
-  const handleRemove = async (e) => {
+  const handleRemove = (e) => {
     e.preventDefault();
     setError("");
 
@@ -17,26 +26,31 @@ export default function RemoveTenantModal({ isOpen, onClose }) {
       return;
     }
 
+    // Store what we're about to delete
+    let column = "";
+    let value = "";
+    if (tenantID) {
+      column = "TenantID";
+      value = tenantID.trim();
+    } else if (fullName) {
+      column = "Name";
+      value = fullName.trim();
+    }
+
+    setPendingRemoval({ column, value });
+    setIsConfirmOpen(true);
+  };
+
+  const handleConfirmRemove = async () => {
     setLoading(true);
+    setIsConfirmOpen(false); // Close the confirm dialog
 
     try {
       const SHEETDB_URL = "https://sheetdb.io/api/v1/trs7w2oteqnyc";
 
-      // Determine which column/value to use
-      let column = "";
-      let value = "";
-      if (tenantID) {
-        column = "TenantID";
-        value = tenantID.trim();
-      } else if (fullName) {
-        column = "Name";
-        value = fullName.trim();
-      }
-
-      // Build query string for SheetDB DELETE
       const query = `column=${encodeURIComponent(
-        column
-      )}&value=${encodeURIComponent(value)}`;
+        pendingRemoval.column
+      )}&value=${encodeURIComponent(pendingRemoval.value)}`;
 
       const response = await fetch(`${SHEETDB_URL}?${query}`, {
         method: "DELETE",
@@ -46,15 +60,25 @@ export default function RemoveTenantModal({ isOpen, onClose }) {
         onSuccess?.();
         setTenantID("");
         setFullName("");
+        setPendingRemoval(null);
         onClose();
       } else {
-        setError("No matching tenant found or failed to delete.");
+        const errorMsg = "No matching tenant found or failed to delete.";
+        setError(errorMsg);
+        onError?.(errorMsg);
       }
     } catch (err) {
-      setError("An error occurred while removing the tenant.");
+      const errorMsg = "An error occurred while removing the tenant.";
+      setError(errorMsg);
+      onError?.(errorMsg);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCancelRemove = () => {
+    setIsConfirmOpen(false);
+    setPendingRemoval(null);
   };
 
   return (
@@ -101,6 +125,16 @@ export default function RemoveTenantModal({ isOpen, onClose }) {
           </div>
         </form>
       </div>
+
+      <ConfirmDialog
+        isOpen={isConfirmOpen}
+        onConfirm={handleConfirmRemove}
+        onCancel={handleCancelRemove}
+        title="Confirm Tenant Removal"
+        message="Are you sure you want to remove this tenant? This action cannot be undone."
+        confirmText="Yes, Remove"
+        cancelText="Cancel"
+      />
     </div>
   );
 }
