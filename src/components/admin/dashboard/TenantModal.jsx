@@ -1,11 +1,11 @@
-// src/components/admin/TenantModal.jsx
 import { useState, useEffect } from "react";
-import { addTenant } from "../../../utils/tenantHelperFunctions";
+import { addTenant, editTenant } from "../../../utils/tenantHelperFunctions";
 
 export default function TenantModal({
   isOpen,
   onClose,
   onSubmit,
+  onError,
   tenantData = null,
 }) {
   const [name, setName] = useState("");
@@ -71,9 +71,12 @@ export default function TenantModal({
       let savedTenant;
 
       if (tenantData?.TenantID) {
-        // (Optional) edit tenant logic if you add it later
+        // Edit existing tenant
+        savedTenant = await editTenant(tenantData.TenantID, tenantPayload);
+        // Merge with existing data to preserve TenantID
+        savedTenant = { ...tenantData, ...tenantPayload };
       } else {
-        // Add tenant (this automatically triggers prepopulateDuePayments)
+        // Add new tenant
         savedTenant = await addTenant(tenantPayload);
       }
 
@@ -82,7 +85,11 @@ export default function TenantModal({
       onClose();
     } catch (err) {
       console.error(err);
-      alert(err.message || "Error saving tenant.");
+      // Use onError callback instead of alert
+      const errorMsg = tenantData?.TenantID
+        ? "Failed to update tenant"
+        : "Failed to add tenant";
+      onError?.(err.message || errorMsg);
     } finally {
       setIsSubmitting(false);
     }
