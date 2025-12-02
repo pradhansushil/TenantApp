@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
+import Toast from "../components/Toasts";
 
 // Modals
 import { AddUnitModal } from "../components/admin/units/AddUnitModal";
 import { EditUnitModal } from "../components/admin/units/EditUnitModal";
-import { DeleteUnitModal } from "../components/admin/units/DeleteUnitModal";
+import ConfirmDialog from "../components/ConfirmDialog";
 
 // API / service functions
 import {
@@ -40,11 +41,22 @@ export default function Units() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingUnit, setEditingUnit] = useState(null);
 
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [deletingUnit, setDeletingUnit] = useState(null);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [unitToDelete, setUnitToDelete] = useState(null);
 
   const [statusFilter, setStatusFilter] = useState("All");
   const [sortType, setSortType] = useState("UnitNumber");
+
+  // Toast state
+  const [toast, setToast] = useState({ message: "", type: "success" });
+
+  const showToast = (message, type = "success") => {
+    setToast({ message, type });
+  };
+
+  const clearToast = () => {
+    setToast({ message: "", type: "success" });
+  };
 
   // Load units on mount
   useEffect(() => {
@@ -82,11 +94,12 @@ export default function Units() {
     try {
       const added = await addUnit({
         ...newUnit,
-        UnitID: `U-${Math.floor(1000 + Math.random() * 9000)}`, // auto-generate
+        UnitID: `U-${Math.floor(1000 + Math.random() * 9000)}`,
       });
       setUnits((prev) => [...prev, added]);
+      showToast("Unit added successfully", "success");
     } catch {
-      setError("Failed to add unit.");
+      showToast("Failed to add unit", "error");
     }
   };
 
@@ -97,30 +110,40 @@ export default function Units() {
       setUnits((prev) =>
         prev.map((u) => (u.UnitID === updated.UnitID ? updated : u))
       );
+      showToast("Unit updated successfully", "success");
     } catch {
-      setError("Failed to update unit.");
+      showToast("Failed to update unit", "error");
     }
   };
 
   // Delete a unit
-  const handleDeleteUnit = async (unitID) => {
+  const handleDeleteUnit = async () => {
     try {
-      await deleteUnit(unitID);
-      setUnits((prev) => prev.filter((u) => u.UnitID !== unitID));
+      await deleteUnit(unitToDelete);
+      setUnits((prev) => prev.filter((u) => u.UnitID !== unitToDelete));
+      showToast("Unit deleted successfully", "success");
     } catch {
-      setError("Failed to delete unit.");
+      showToast("Failed to delete unit", "error");
+    } finally {
+      setIsConfirmOpen(false);
+      setUnitToDelete(null);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setIsConfirmOpen(false);
+    setUnitToDelete(null);
   };
 
   if (loading) return <p>Loading units...</p>;
   if (error) return <p>{error}</p>;
-  if (!units.length) return <p>No units found.</p>;
 
   return (
     <div>
+      <Toast message={toast.message} type={toast.type} onClose={clearToast} />
+
       <h1>Unit Management</h1>
 
-      {/* Controls */}
       <div className="units-controls">
         <button onClick={() => setIsAddModalOpen(true)}>Add Unit</button>
 
@@ -150,59 +173,61 @@ export default function Units() {
         </div>
       </div>
 
-      {/* Table */}
-      <table className="units-table">
-        <thead>
-          <tr>
-            <th>UnitID</th>
-            <th>UnitNumber</th>
-            <th>Status</th>
-            <th>TenantName</th>
-            <th>MoveInDate</th>
-            <th>Rent</th>
-            <th>Notes</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredUnits.map((unit) => (
-            <tr key={unit.UnitID}>
-              <td>{unit.UnitID}</td>
-              <td>{unit.UnitNumber}</td>
-              <td>{unit.Status}</td>
-              <td>{unit.TenantName || "-"}</td>
-              <td>{unit.MoveInDate || "-"}</td>
-              <td>{unit.Rent || "-"}</td>
-              <td>{unit.Notes || "-"}</td>
-              <td>
-                <a
-                  href="#"
-                  style={{ marginRight: "10px" }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setEditingUnit(unit);
-                    setIsEditModalOpen(true);
-                  }}
-                >
-                  Edit
-                </a>
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setDeletingUnit(unit);
-                    setIsDeleteModalOpen(true);
-                  }}
-                >
-                  Delete
-                </a>
-              </td>
+      {units.length === 0 ? (
+        <p>No units found.</p>
+      ) : (
+        <table className="units-table">
+          <thead>
+            <tr>
+              <th>UnitID</th>
+              <th>UnitNumber</th>
+              <th>Status</th>
+              <th>TenantName</th>
+              <th>MoveInDate</th>
+              <th>Rent</th>
+              <th>Notes</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredUnits.map((unit) => (
+              <tr key={unit.UnitID}>
+                <td>{unit.UnitID}</td>
+                <td>{unit.UnitNumber}</td>
+                <td>{unit.Status}</td>
+                <td>{unit.TenantName || "-"}</td>
+                <td>{unit.MoveInDate || "-"}</td>
+                <td>{unit.Rent || "-"}</td>
+                <td>{unit.Notes || "-"}</td>
+                <td>
+                  <a
+                    href="#"
+                    style={{ marginRight: "10px" }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setEditingUnit(unit);
+                      setIsEditModalOpen(true);
+                    }}
+                  >
+                    Edit
+                  </a>
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setUnitToDelete(unit.UnitID);
+                      setIsConfirmOpen(true);
+                    }}
+                  >
+                    Delete
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
 
-      {/* Modals */}
       <AddUnitModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
@@ -216,11 +241,18 @@ export default function Units() {
         onUpdate={handleUpdateUnit}
       />
 
-      <DeleteUnitModal
-        isOpen={isDeleteModalOpen}
-        unit={deletingUnit}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onDelete={handleDeleteUnit}
+      <ConfirmDialog
+        isOpen={isConfirmOpen}
+        onConfirm={handleDeleteUnit}
+        onCancel={handleCancelDelete}
+        title="Delete Unit"
+        message={
+          unitToDelete
+            ? `Are you sure you want to delete this unit? This action cannot be undone.`
+            : ""
+        }
+        confirmText="Yes, Delete"
+        cancelText="Cancel"
       />
     </div>
   );
