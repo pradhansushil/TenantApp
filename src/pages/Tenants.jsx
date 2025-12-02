@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react";
 import TenantModal from "../components/admin/dashboard/TenantModal";
-import TenantFilters from "../components/admin/dashboard/TenantFilters";
+import TenantFilters from "../components/TenantFilters";
 import Toast from "../components/Toasts";
 import ConfirmDialog from "../components/ConfirmDialog";
 import {
   getAllTenants,
   sortTenants,
-  addTenant,
-  editTenant,
   removeTenant,
 } from "../utils/tenantHelperFunctions";
 
@@ -136,7 +134,6 @@ export default function Tenants() {
     showToast(errorMessage || "Operation failed", "error");
   };
 
-  // Optional: reset all filters
   const handleResetFilters = () => {
     setSearchName("");
     setUnitFilter("");
@@ -183,9 +180,8 @@ export default function Tenants() {
         moveInTo={moveInTo}
         onMoveInToChange={(e) => setMoveInTo(e.target.value)}
       />
-      <button onClick={handleResetFilters}>Reset Filters</button>
 
-      {/* Sort */}
+      {/* Sort dropdown */}
       <div>
         <label>Sort by: </label>
         <select
@@ -197,6 +193,8 @@ export default function Tenants() {
           <option value="unit">Unit Number</option>
         </select>
       </div>
+
+      <button onClick={handleResetFilters}>Reset Filters</button>
 
       {/* Tenant Table */}
       {tenants.length === 0 ? (
