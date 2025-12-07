@@ -1,6 +1,6 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import Header from "./components/Header";
-import Footer from "./components/Footer"; // Footer will appear on all pages
+import Footer from "./components/Footer";
 import { Home } from "./pages/Home";
 import TenantPortal from "./pages/TenantPortal";
 import AdminLogin from "./pages/AdminLogin";
