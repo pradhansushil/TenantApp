@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 
 export default function AdminSidebar() {
   const links = [
-    { name: "Dashboard", path: "/admin" },
+    { name: "Dashboard", path: "/admin", end: true },
     { name: "Tenants", path: "/admin/tenants" },
     { name: "Units", path: "/admin/units" },
     { name: "Payments", path: "/admin/payments" },
@@ -16,6 +16,7 @@ export default function AdminSidebar() {
           <li key={link.name} className="sidebar-item">
             <NavLink
               to={link.path}
+              end={link.end}
               className={({ isActive }) =>
                 `sidebar-link ${isActive ? "active" : ""}`
               }
