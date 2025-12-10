@@ -57,9 +57,6 @@ const Maintenance = () => {
     fetchMaintenance();
   }, []);
 
-  if (loading) return <p>Loading maintenance requests...</p>;
-  if (requests.length === 0) return <p>No maintenance requests found.</p>;
-
   // Apply all filters + sorting through helper
   const filteredRequests = filterAndSortRequests(
     requests,
@@ -74,6 +71,7 @@ const Maintenance = () => {
     <div>
       <h1>Maintenance Requests</h1>
 
+      {/* Always show filters */}
       <MaintenanceFilters
         searchText={searchText}
         setSearchText={setSearchText}
@@ -88,7 +86,18 @@ const Maintenance = () => {
         resetFilters={resetFilters}
       />
 
-      <MaintenanceTable requests={filteredRequests} />
+      {/* Loading state */}
+      {loading && <p>Loading maintenance requests...</p>}
+
+      {/* No data state */}
+      {!loading && filteredRequests.length === 0 && (
+        <p>No maintenance requests found.</p>
+      )}
+
+      {/* Table */}
+      {!loading && filteredRequests.length > 0 && (
+        <MaintenanceTable requests={filteredRequests} />
+      )}
     </div>
   );
 };
