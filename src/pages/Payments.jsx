@@ -40,6 +40,16 @@ export default function Payments() {
     }
   };
 
+  // Reset only filters (does not clear table data)
+  const handleResetFilters = () => {
+    setSearchTenantID("");
+    setSearchUnit("");
+    setSearchReference("");
+    setPaymentMethodFilter("");
+    setPaymentFrom("");
+    setPaymentTo("");
+  };
+
   // Filter payments before rendering
   const filteredPayments = payments
     .filter((p) => !searchTenantID || p.TenantID.includes(searchTenantID))
@@ -62,16 +72,6 @@ export default function Payments() {
       return true;
     });
 
-  // Reset only filters (does not clear table data)
-  const handleResetFilters = () => {
-    setSearchTenantID("");
-    setSearchUnit("");
-    setSearchReference("");
-    setPaymentMethodFilter("");
-    setPaymentFrom("");
-    setPaymentTo("");
-  };
-
   if (loading) {
     return <div>Loading payments...</div>;
   }
@@ -84,7 +84,7 @@ export default function Payments() {
     <div>
       <h1>All Payments</h1>
 
-      {/* Filters */}
+      {/* Filters (with Reset button inside PaymentFilters) */}
       <PaymentFilters
         searchTenantID={searchTenantID}
         onSearchTenantIDChange={(e) => setSearchTenantID(e.target.value)}
@@ -100,12 +100,8 @@ export default function Payments() {
         onPaymentFromChange={(e) => setPaymentFrom(e.target.value)}
         paymentTo={paymentTo}
         onPaymentToChange={(e) => setPaymentTo(e.target.value)}
+        onResetFilters={handleResetFilters} // ✅ passed down
       />
-
-      {/* Reset Filters button */}
-      <button onClick={handleResetFilters} style={{ marginBottom: "1rem" }}>
-        Reset Filters
-      </button>
 
       {/* Payments Table */}
       {filteredPayments.length === 0 ? (
