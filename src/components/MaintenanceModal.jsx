@@ -1,9 +1,8 @@
-// removed inline styles and added X to the modal.
-
 import { useState } from "react";
 import { addMaintenanceRequest } from "../services/maintenanceService";
 
 export default function MaintenanceModal({
+  isOpen,
   onClose,
   setToastMessage,
   setToastType,
@@ -12,6 +11,9 @@ export default function MaintenanceModal({
   const [unitNumber, setUnitNumber] = useState("");
   const [details, setDetails] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // ✅ Guard clause: only render if open
+  if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -95,7 +97,7 @@ export default function MaintenanceModal({
           </div>
 
           <div className="modal-actions">
-            <button type="button" onClick={onClose}>
+            <button type="button" onClick={onClose} disabled={isSubmitting}>
               Cancel
             </button>
 
