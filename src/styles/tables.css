@@ -1,0 +1,237 @@
+/* ============================================
+   TABLES.CSS - Table Styling
+   ============================================ */
+
+/* ============================================
+   Table Container (for horizontal scroll on mobile)
+   ============================================ */
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Subtle shadow to indicate scrollability */
+.table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: var(--color-gray-100);
+  border-radius: var(--radius-md);
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: var(--color-gray-300);
+  border-radius: var(--radius-md);
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-400);
+}
+
+/* ============================================
+   Base Table Styles
+   ============================================ */
+
+table,
+.tenant-table,
+.maintenance-table,
+.payments-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--color-white);
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+/* ============================================
+   Table Headers
+   ============================================ */
+
+thead {
+  background-color: var(--color-gray-50);
+  border-bottom: 2px solid var(--color-border);
+}
+
+th {
+  padding: var(--spacing-md);
+  text-align: left;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+/* ============================================
+   Table Body & Rows
+   ============================================ */
+
+tbody tr {
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color var(--transition-fast);
+}
+
+/* Zebra striping (alternating row colors) */
+tbody tr:nth-child(even) {
+  background-color: var(--color-gray-100);
+}
+
+/* Hover effect */
+tbody tr:hover {
+  background-color: var(--color-primary-light);
+  cursor: pointer;
+}
+
+/* Remove border from last row */
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* ============================================
+   Table Cells
+   ============================================ */
+
+td {
+  padding: var(--spacing-md);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  vertical-align: middle;
+}
+
+/* Links inside table cells */
+td a {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+  transition: color var(--transition-fast);
+}
+
+td a:hover {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
+}
+
+/* ============================================
+   Action Links (Edit, Delete, etc.)
+   ============================================ */
+
+td a[href*="edit"],
+td a[href*="Edit"] {
+  color: var(--color-primary);
+  margin-right: var(--spacing-sm);
+}
+
+td a[href*="delete"],
+td a[href*="Delete"] {
+  color: var(--color-danger);
+}
+
+td a[href*="edit"]:hover,
+td a[href*="Edit"]:hover {
+  color: var(--color-primary-dark);
+}
+
+td a[href*="delete"]:hover,
+td a[href*="Delete"]:hover {
+  color: var(--color-danger-dark);
+}
+
+/* ============================================
+   Status Badges in Tables
+   ============================================ */
+
+td .badge {
+  display: inline-block;
+}
+
+/* Status-specific styling */
+.status-occupied {
+  color: var(--color-success-dark);
+  font-weight: var(--font-weight-semibold);
+}
+
+.status-vacant {
+  color: var(--color-warning-dark);
+  font-weight: var(--font-weight-semibold);
+}
+
+.status-maintenance {
+  color: var(--color-danger-dark);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ============================================
+   Empty State (No Data)
+   ============================================ */
+
+.table-empty {
+  padding: var(--spacing-2xl);
+  text-align: center;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* ============================================
+   Responsive Tables
+   ============================================ */
+
+/* On mobile, ensure minimum column widths */
+@media (max-width: 768px) {
+  th,
+  td {
+    padding: var(--spacing-sm);
+    font-size: var(--font-size-xs);
+  }
+
+  /* Minimum width for columns to prevent cramping */
+  th,
+  td {
+    min-width: 80px;
+  }
+
+  /* First column (usually ID) can be narrower */
+  th:first-child,
+  td:first-child {
+    min-width: 60px;
+  }
+
+  /* Actions column can be narrower */
+  th:last-child,
+  td:last-child {
+    min-width: 100px;
+  }
+}
+
+/* ============================================
+   Table-specific overrides
+   ============================================ */
+
+/* Dashboard widget tables (smaller, compact) */
+.dashboard-tenants table,
+.dashboard-maintenance table,
+.dashboard-payments table {
+  font-size: var(--font-size-xs);
+}
+
+.dashboard-tenants th,
+.dashboard-maintenance th,
+.dashboard-payments th,
+.dashboard-tenants td,
+.dashboard-maintenance td,
+.dashboard-payments td {
+  padding: var(--spacing-sm);
+}
+
+/* Remove hover effect on dashboard widget tables */
+.dashboard-tenants tbody tr:hover,
+.dashboard-maintenance tbody tr:hover,
+.dashboard-payments tbody tr:hover {
+  background-color: inherit;
+  cursor: default;
+}

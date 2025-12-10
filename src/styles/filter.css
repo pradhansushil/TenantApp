@@ -1,0 +1,50 @@
+/* Container for all filter groups */
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap; /* allow wrapping only if really needed */
+  margin-bottom: 1rem;
+}
+
+/* Text inputs and select dropdowns */
+.filter-group input[type="text"],
+.filter-group select {
+  flex: 1 1 auto; /* grow/shrink dynamically */
+  min-width: 100px; /* won't shrink too small */
+  max-width: 200px; /* won't grow too wide */
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+/* Date inputs slightly smaller for readability */
+.filter-group input[type="date"] {
+  flex: 0 1 140px;
+  max-width: 140px;
+  padding: 0.35rem 0.5rem;
+}
+
+/* Buttons (Reset/Restore Defaults) */
+.filter-group button {
+  flex: 0 0 auto; /* fixed width, will not shrink */
+  padding: 0.45rem 0.8rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.filter-group button:hover {
+  background-color: #0056b3;
+}
+
+/* Optional: make inputs take remaining space */
+.filter-group input[type="text"],
+.filter-group select {
+  flex: 1 1 150px;
+}
