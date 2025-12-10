@@ -6,6 +6,9 @@ import { AddUnitModal } from "../components/admin/units/AddUnitModal";
 import { EditUnitModal } from "../components/admin/units/EditUnitModal";
 import ConfirmDialog from "../components/ConfirmDialog";
 
+// Filters
+import UnitFilters from "../components/UnitFilters";
+
 // API / service functions
 import {
   fetchUnits,
@@ -44,19 +47,15 @@ export default function Units() {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [unitToDelete, setUnitToDelete] = useState(null);
 
+  // Filter states
   const [statusFilter, setStatusFilter] = useState("All");
   const [sortType, setSortType] = useState("UnitNumber");
 
   // Toast state
   const [toast, setToast] = useState({ message: "", type: "success" });
 
-  const showToast = (message, type = "success") => {
-    setToast({ message, type });
-  };
-
-  const clearToast = () => {
-    setToast({ message: "", type: "success" });
-  };
+  const showToast = (message, type = "success") => setToast({ message, type });
+  const clearToast = () => setToast({ message: "", type: "success" });
 
   // Load units on mount
   useEffect(() => {
@@ -135,45 +134,32 @@ export default function Units() {
     setUnitToDelete(null);
   };
 
-  if (loading) return <p>Loading units...</p>;
-  if (error) return <p>{error}</p>;
+  const handleResetFilters = () => {
+    setStatusFilter("All");
+    setSortType("UnitNumber");
+  };
 
   return (
     <div>
       <Toast message={toast.message} type={toast.type} onClose={clearToast} />
 
       <h1>Unit Management</h1>
+      <button onClick={() => setIsAddModalOpen(true)}>Add Unit</button>
 
-      <div className="units-controls">
-        <button onClick={() => setIsAddModalOpen(true)}>Add Unit</button>
+      {/* Filters - always visible */}
+      <UnitFilters
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+        sortType={sortType}
+        setSortType={setSortType}
+        resetFilters={handleResetFilters}
+      />
 
-        <div className="filter-sort">
-          <label>
-            Status:
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="All">All</option>
-              <option value="Occupied">Occupied</option>
-              <option value="Vacant">Vacant</option>
-            </select>
-          </label>
-
-          <label>
-            Sort by:
-            <select
-              value={sortType}
-              onChange={(e) => setSortType(e.target.value)}
-            >
-              <option value="UnitNumber">Unit Number</option>
-              <option value="Rent">Rent</option>
-            </select>
-          </label>
-        </div>
-      </div>
-
-      {units.length === 0 ? (
+      {loading ? (
+        <p>Loading units...</p>
+      ) : error ? (
+        <p>{error}</p>
+      ) : units.length === 0 ? (
         <p>No units found.</p>
       ) : (
         <table className="units-table">
