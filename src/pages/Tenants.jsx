@@ -57,19 +57,16 @@ export default function Tenants() {
   useEffect(() => {
     let filtered = tenants;
 
-    // Search by name
     if (searchName) {
       filtered = filtered.filter((t) =>
         t.Name.toLowerCase().includes(searchName.toLowerCase())
       );
     }
 
-    // Filter by unit
     if (unitFilter) {
       filtered = filtered.filter((t) => t.Unit === unitFilter);
     }
 
-    // Filter by move-in date range
     if (moveInFrom || moveInTo) {
       filtered = filtered.filter((t) => {
         const moveInDate = new Date(t.MoveInDate);
@@ -79,7 +76,6 @@ export default function Tenants() {
       });
     }
 
-    // Sort filtered tenants
     setFilteredTenants(sortTenants(filtered, filterType));
   }, [tenants, filterType, searchName, unitFilter, moveInFrom, moveInTo]);
 
@@ -139,6 +135,7 @@ export default function Tenants() {
     setUnitFilter("");
     setMoveInFrom("");
     setMoveInTo("");
+    setFilterType("name");
   };
 
   if (loading) return <p>Loading tenants...</p>;
@@ -169,7 +166,7 @@ export default function Tenants() {
         cancelText="Cancel"
       />
 
-      {/* Filters */}
+      {/* Filters (includes sort dropdown and reset button inside) */}
       <TenantFilters
         searchName={searchName}
         onSearchNameChange={(e) => setSearchName(e.target.value)}
@@ -179,22 +176,10 @@ export default function Tenants() {
         onMoveInFromChange={(e) => setMoveInFrom(e.target.value)}
         moveInTo={moveInTo}
         onMoveInToChange={(e) => setMoveInTo(e.target.value)}
+        filterType={filterType}
+        onFilterTypeChange={(e) => setFilterType(e.target.value)}
+        onResetFilters={handleResetFilters}
       />
-
-      {/* Sort dropdown */}
-      <div>
-        <label>Sort by: </label>
-        <select
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value)}
-        >
-          <option value="name">Name (A → Z)</option>
-          <option value="moveInDate">Move-in Date (Newest → Oldest)</option>
-          <option value="unit">Unit Number</option>
-        </select>
-      </div>
-
-      <button onClick={handleResetFilters}>Reset Filters</button>
 
       {/* Tenant Table */}
       {tenants.length === 0 ? (
