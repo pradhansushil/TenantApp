@@ -7,9 +7,12 @@ export default function TenantFilters({
   onMoveInFromChange,
   moveInTo,
   onMoveInToChange,
+  filterType,
+  onFilterTypeChange,
+  onResetFilters,
 }) {
   return (
-    <div style={{ marginBottom: "1rem" }}>
+    <div className="filter-group">
       <input
         type="text"
         placeholder="Search by name"
@@ -24,6 +27,12 @@ export default function TenantFilters({
       />
       <input type="date" value={moveInFrom} onChange={onMoveInFromChange} />
       <input type="date" value={moveInTo} onChange={onMoveInToChange} />
+      <select value={filterType} onChange={onFilterTypeChange}>
+        <option value="name">Name (A → Z)</option>
+        <option value="moveInDate">Move-in Date (Newest → Oldest)</option>
+        <option value="unit">Unit Number</option>
+      </select>
+      <button onClick={onResetFilters}>Reset Filters</button>
     </div>
   );
 }
