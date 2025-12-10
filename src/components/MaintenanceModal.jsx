@@ -1,3 +1,5 @@
+// removed inline styles and added X to the modal.
+
 import { useState } from "react";
 import { addMaintenanceRequest } from "../services/maintenanceService";
 
@@ -37,13 +39,13 @@ export default function MaintenanceModal({
 
       await addMaintenanceRequest(payload);
 
-      // ✅ Show global success toast
+      // Show global success toast
       setToastType("success");
       setToastMessage("Maintenance request submitted successfully!");
 
       setTimeout(() => onClose(), 1500);
     } catch (err) {
-      // ✅ Show global error toast
+      // Show global error toast
       setToastType("error");
       setToastMessage(err.message || "Error submitting maintenance request.");
     } finally {
@@ -52,37 +54,18 @@ export default function MaintenanceModal({
   };
 
   return (
-    <div
-      className="modal-overlay"
-      onClick={onClose}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        backgroundColor: "rgba(0,0,0,0.5)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 999,
-      }}
-    >
-      <div
-        className="modal-content"
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          backgroundColor: "white",
-          padding: "20px",
-          borderRadius: "8px",
-          width: "400px",
-        }}
-      >
-        <h2>Maintenance Request</h2>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>Maintenance Request</h2>
+          <button className="close-button" onClick={onClose}>
+            &times;
+          </button>
+        </div>
 
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: "10px" }}>
-            <label>Your Name</label>
+        <form className="modal-body" onSubmit={handleSubmit}>
+          <div>
+            <label>Your Name *</label>
             <input
               type="text"
               value={tenantName}
@@ -91,8 +74,8 @@ export default function MaintenanceModal({
             />
           </div>
 
-          <div style={{ marginBottom: "10px" }}>
-            <label>Unit Number</label>
+          <div>
+            <label>Unit Number *</label>
             <input
               type="text"
               value={unitNumber}
@@ -101,8 +84,8 @@ export default function MaintenanceModal({
             />
           </div>
 
-          <div style={{ marginBottom: "10px" }}>
-            <label>Describe the Issue</label>
+          <div>
+            <label>Describe the Issue *</label>
             <textarea
               rows="4"
               value={details}
@@ -111,17 +94,15 @@ export default function MaintenanceModal({
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            style={{ marginRight: "10px" }}
-          >
-            {isSubmitting ? "Submitting..." : "Submit Request"}
-          </button>
+          <div className="modal-actions">
+            <button type="button" onClick={onClose}>
+              Cancel
+            </button>
 
-          <button type="button" onClick={onClose}>
-            Cancel
-          </button>
+            <button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Submitting..." : "Submit Request"}
+            </button>
+          </div>
         </form>
       </div>
     </div>
