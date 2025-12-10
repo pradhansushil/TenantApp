@@ -1,3 +1,6 @@
+// For Remove Tenant Button
+// Added X for the modal
+
 import { useState } from "react";
 import ConfirmDialog from "../../ConfirmDialog";
 
@@ -43,7 +46,7 @@ export default function RemoveTenantModal({
 
   const handleConfirmRemove = async () => {
     setLoading(true);
-    setIsConfirmOpen(false); // Close the confirm dialog
+    setIsConfirmOpen(false);
 
     try {
       const SHEETDB_URL = "https://sheetdb.io/api/v1/trs7w2oteqnyc";
@@ -82,44 +85,44 @@ export default function RemoveTenantModal({
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-box">
-        <h2 className="modal-title">Remove Tenant</h2>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>Remove Tenant</h2>
+          <button className="close-button" onClick={onClose}>
+            &times;
+          </button>
+        </div>
 
-        <form onSubmit={handleRemove} className="modal-form">
-          <input
-            type="text"
-            placeholder="Tenant ID"
-            value={tenantID}
-            onChange={(e) => setTenantID(e.target.value)}
-            className="modal-input"
-          />
+        <form onSubmit={handleRemove} className="modal-body">
+          <div>
+            <label>Tenant ID</label>
+            <input
+              type="text"
+              placeholder="Enter Tenant ID"
+              value={tenantID}
+              onChange={(e) => setTenantID(e.target.value)}
+            />
+          </div>
 
-          <input
-            type="text"
-            placeholder="Full Name"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className="modal-input"
-          />
+          <div>
+            <label>Full Name</label>
+            <input
+              type="text"
+              placeholder="Enter Full Name"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+            />
+          </div>
 
           {error && <p className="modal-error">{error}</p>}
 
           <div className="modal-actions">
-            <button
-              type="button"
-              onClick={onClose}
-              className="modal-btn cancel-btn"
-              disabled={loading}
-            >
+            <button type="button" onClick={onClose} disabled={loading}>
               Cancel
             </button>
 
-            <button
-              type="submit"
-              className="modal-btn remove-btn"
-              disabled={loading}
-            >
+            <button type="submit" className="remove-btn" disabled={loading}>
               {loading ? "Removing..." : "Remove Tenant"}
             </button>
           </div>
