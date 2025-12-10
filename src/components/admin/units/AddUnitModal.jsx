@@ -23,15 +23,14 @@ export function AddUnitModal({ isOpen, onClose, onAdd }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newUnit = {
+    onAdd({
       UnitNumber: unitNumber,
       Status: status,
       TenantName: tenantName || "",
       MoveInDate: moveInDate || "",
       Rent: rent || "",
       Notes: notes || "",
-    };
-    onAdd(newUnit);
+    });
     onClose();
   };
 
@@ -40,68 +39,78 @@ export function AddUnitModal({ isOpen, onClose, onAdd }) {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h2>Add New Unit</h2>
-        <form onSubmit={handleSubmit}>
-          <label>
-            Unit Number:
-            <input
-              type="text"
-              value={unitNumber}
-              onChange={(e) => setUnitNumber(e.target.value)}
-              required
-            />
-          </label>
+        <div className="modal-header">
+          <h2>Add New Unit</h2>
+          <button className="close-button" onClick={onClose}>
+            &times;
+          </button>
+        </div>
+        <div className="modal-body">
+          <form onSubmit={handleSubmit}>
+            <label>
+              Unit Number:
+              <input
+                type="text"
+                value={unitNumber}
+                onChange={(e) => setUnitNumber(e.target.value)}
+                required
+              />
+            </label>
 
-          <label>
-            Status:
-            <select value={status} onChange={(e) => setStatus(e.target.value)}>
-              <option value="Vacant">Vacant</option>
-              <option value="Occupied">Occupied</option>
-            </select>
-          </label>
+            <label>
+              Status:
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+              >
+                <option value="Vacant">Vacant</option>
+                <option value="Occupied">Occupied</option>
+              </select>
+            </label>
 
-          <label>
-            Tenant Name:
-            <input
-              type="text"
-              value={tenantName}
-              onChange={(e) => setTenantName(e.target.value)}
-            />
-          </label>
+            <label>
+              Tenant Name:
+              <input
+                type="text"
+                value={tenantName}
+                onChange={(e) => setTenantName(e.target.value)}
+              />
+            </label>
 
-          <label>
-            Move-in Date:
-            <input
-              type="date"
-              value={moveInDate}
-              onChange={(e) => setMoveInDate(e.target.value)}
-            />
-          </label>
+            <label>
+              Move-in Date:
+              <input
+                type="date"
+                value={moveInDate}
+                onChange={(e) => setMoveInDate(e.target.value)}
+              />
+            </label>
 
-          <label>
-            Rent:
-            <input
-              type="number"
-              value={rent}
-              onChange={(e) => setRent(e.target.value)}
-            />
-          </label>
+            <label>
+              Rent:
+              <input
+                type="number"
+                value={rent}
+                onChange={(e) => setRent(e.target.value)}
+              />
+            </label>
 
-          <label>
-            Notes:
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-            />
-          </label>
+            <label>
+              Notes:
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+              />
+            </label>
 
-          <div className="modal-actions">
-            <button type="submit">Add Unit</button>
-            <button type="button" onClick={onClose}>
-              Cancel
-            </button>
-          </div>
-        </form>
+            <div className="modal-actions">
+              <button type="submit">Add Unit</button>
+              <button type="button" onClick={onClose}>
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
