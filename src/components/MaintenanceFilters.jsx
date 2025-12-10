@@ -1,4 +1,4 @@
-const MaintenanceFilters = ({
+export default function MaintenanceFilters({
   searchText,
   setSearchText,
   dateRange,
@@ -10,9 +10,9 @@ const MaintenanceFilters = ({
   sortOption,
   setSortOption,
   resetFilters,
-}) => {
+}) {
   return (
-    <div>
+    <div className="filter-group">
       {/* Text Search */}
       <input
         type="text"
@@ -39,7 +39,6 @@ const MaintenanceFilters = ({
         value={customStartDate}
         onChange={(e) => setCustomStartDate(e.target.value)}
       />
-
       <input
         type="date"
         value={customEndDate}
@@ -57,10 +56,10 @@ const MaintenanceFilters = ({
         <option value="TenantZtoA">Tenant Name Z-A</option>
       </select>
 
-      {/* Restore Defaults */}
-      <button onClick={resetFilters}>Restore Defaults</button>
+      {/* Reset Filters */}
+      <button type="button" onClick={resetFilters}>
+        Reset Filters
+      </button>
     </div>
   );
-};
-
-export default MaintenanceFilters;
+}
