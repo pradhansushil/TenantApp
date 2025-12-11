@@ -1,50 +1,328 @@
-/* Container for all filter groups */
+/* ============================================
+   FILTERS.CSS - Complete Filter Styling
+   ============================================ */
+
+/* ============================================
+   Filter Container
+   ============================================ */
+
+.filter-container {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+/* ============================================
+   Filter Group (single row of filters)
+   ============================================ */
+
 .filter-group {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap; /* allow wrapping only if really needed */
-  margin-bottom: 1rem;
+  gap: var(--spacing-sm);
+  flex-wrap: nowrap; /* Keep everything in one row */
+  margin-bottom: var(--spacing-lg);
 }
 
-/* Text inputs and select dropdowns */
+.filter-group:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================
+   Filter Labels
+   ============================================ */
+
+.filter-group label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   Filter Inputs - Compact Widths
+   ============================================ */
+
+/* Text inputs - compact default width */
 .filter-group input[type="text"],
+.filter-group input[type="search"] {
+  flex: 0 0 auto;
+  width: 180px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-white);
+  color: var(--color-text-primary);
+  transition: border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Select dropdowns - compact width */
 .filter-group select {
-  flex: 1 1 auto; /* grow/shrink dynamically */
-  min-width: 100px; /* won't shrink too small */
-  max-width: 200px; /* won't grow too wide */
-  padding: 0.4rem 0.6rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 200px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-white);
+  color: var(--color-text-primary);
+  transition: border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
-/* Date inputs slightly smaller for readability */
+/* Date inputs - compact width */
 .filter-group input[type="date"] {
-  flex: 0 1 140px;
-  max-width: 140px;
-  padding: 0.35rem 0.5rem;
+  flex: 0 0 auto;
+  width: 150px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-white);
+  color: var(--color-text-primary);
+  transition: border-color var(--transition-fast);
 }
 
-/* Buttons (Reset/Restore Defaults) */
+/* Focus states */
+.filter-group input[type="text"]:focus,
+.filter-group input[type="search"]:focus,
+.filter-group select:focus,
+.filter-group input[type="date"]:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* ============================================
+   Filter Buttons
+   ============================================ */
+
 .filter-group button {
-  flex: 0 0 auto; /* fixed width, will not shrink */
-  padding: 0.45rem 0.8rem;
-  border: none;
-  border-radius: 4px;
-  background-color: #007bff;
-  color: white;
+  flex: 0 0 auto;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  background-color: var(--color-white);
+  color: var(--color-primary);
   cursor: pointer;
-  transition: background-color 0.2s;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
 }
 
 .filter-group button:hover {
-  background-color: #0056b3;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
-/* Optional: make inputs take remaining space */
-.filter-group input[type="text"],
-.filter-group select {
-  flex: 1 1 150px;
+.filter-group button:active {
+  transform: translateY(0);
+}
+
+/* Reset/Clear button variant */
+.filter-group button.reset-button,
+.filter-group button[type="reset"] {
+  background-color: var(--color-white);
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+}
+
+.filter-group button.reset-button:hover,
+.filter-group button[type="reset"]:hover {
+  background-color: var(--color-gray-100);
+  color: var(--color-text-primary);
+  border-color: var(--color-gray-300);
+}
+
+/* ============================================
+   More Feature (Collapsible Filters)
+   ============================================ */
+
+.more-feature {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+/* More Filters Toggle Button */
+.more-btn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.more-btn:hover {
+  background-color: var(--color-primary-light);
+  border-color: var(--color-primary);
+  color: var(--color-primary-dark);
+}
+
+/* Expanded Filters Container (inline, same row) */
+.more-filters {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-left: var(--spacing-sm);
+}
+
+/* Inputs inside more-filters */
+.more-filters input[type="text"],
+.more-filters input[type="date"],
+.more-filters select {
+  flex: 0 0 auto;
+  width: 150px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-white);
+  color: var(--color-text-primary);
+  transition: border-color var(--transition-fast);
+}
+
+.more-filters input[type="text"]:focus,
+.more-filters input[type="date"]:focus,
+.more-filters select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* ============================================
+   Sort Controls
+   ============================================ */
+
+.sort-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+.sort-group label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.sort-group select {
+  min-width: 180px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-white);
+  color: var(--color-text-primary);
+  transition: border-color var(--transition-fast);
+}
+
+/* ============================================
+   Responsive Filters
+   ============================================ */
+
+/* Tablet - maintain single row, slightly smaller inputs */
+@media (max-width: 768px) {
+  .filter-group {
+    gap: var(--spacing-xs);
+  }
+
+  .filter-group input[type="text"],
+  .filter-group input[type="search"] {
+    width: 150px;
+  }
+
+  .filter-group select {
+    width: 170px;
+  }
+
+  .filter-group input[type="date"] {
+    width: 130px;
+  }
+}
+
+/* Mobile - stack vertically for better UX */
+@media (max-width: 640px) {
+  .filter-container {
+    padding: var(--spacing-md);
+  }
+
+  .filter-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+
+  .filter-group label {
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .filter-group input[type="text"],
+  .filter-group input[type="search"],
+  .filter-group input[type="date"],
+  .filter-group select {
+    width: 100%;
+  }
+
+  .filter-group button {
+    width: 100%;
+  }
+
+  /* More Feature - mobile */
+  .more-feature {
+    width: 100%;
+  }
+
+  .more-btn {
+    width: 100%;
+  }
+
+  .more-filters {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-left: 0;
+    margin-top: var(--spacing-sm);
+  }
+
+  .more-filters input[type="text"],
+  .more-filters input[type="date"],
+  .more-filters select {
+    width: 100%;
+  }
+}
+
+/* ============================================
+   Filter Status/Result Count
+   ============================================ */
+
+.filter-results {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-sm);
+}
+
+.filter-results strong {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
 }
