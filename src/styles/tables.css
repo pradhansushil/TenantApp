@@ -235,3 +235,38 @@ td .badge {
   background-color: inherit;
   cursor: default;
 }
+
+/* ============================================
+   Table Actions Column
+   ============================================ */
+
+.table-actions {
+  white-space: nowrap;
+}
+
+.table-actions .btn-link {
+  margin: 0 var(--spacing-xs);
+}
+
+.table-actions .btn-link:first-child {
+  margin-left: 0;
+}
+
+.table-actions .btn-link:last-child {
+  margin-right: 0;
+}
+
+/* Mobile: make actions stack or wrap better */
+@media (max-width: 640px) {
+  .table-actions {
+    white-space: normal;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+
+  .table-actions .btn-link {
+    margin: 0;
+    text-align: left;
+  }
+}
