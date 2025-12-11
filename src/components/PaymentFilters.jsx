@@ -1,4 +1,4 @@
-// src/components/filters/PaymentFilters.jsx
+import MoreFeature from "./MoreFeature";
 
 export default function PaymentFilters({
   searchTenantID,
@@ -13,10 +13,11 @@ export default function PaymentFilters({
   onPaymentFromChange,
   paymentTo,
   onPaymentToChange,
-  onResetFilters, // added prop
+  onResetFilters,
 }) {
   return (
     <div className="filter-group">
+      {/* Inline (always visible) */}
       <input
         type="text"
         placeholder="Tenant ID"
@@ -35,20 +36,26 @@ export default function PaymentFilters({
         value={searchReference}
         onChange={onSearchReferenceChange}
       />
-      <select
-        value={paymentMethodFilter}
-        onChange={onPaymentMethodFilterChange}
-      >
-        <option value="">All Methods</option>
-        <option value="Cash">Cash</option>
-        <option value="Bank Transfer">Bank Transfer</option>
-        <option value="Card">Card</option>
-      </select>
-      <input type="date" value={paymentFrom} onChange={onPaymentFromChange} />
-      <input type="date" value={paymentTo} onChange={onPaymentToChange} />
 
-      {/* Consistent Reset Button */}
-      <button onClick={onResetFilters}>Reset Filters</button>
+      {/* More feature sits here, before Reset */}
+      <MoreFeature>
+        <select
+          value={paymentMethodFilter}
+          onChange={onPaymentMethodFilterChange}
+        >
+          <option value="">All Methods</option>
+          <option value="Cash">Cash</option>
+          <option value="Bank Transfer">Bank Transfer</option>
+          <option value="Card">Card</option>
+        </select>
+        <input type="date" value={paymentFrom} onChange={onPaymentFromChange} />
+        <input type="date" value={paymentTo} onChange={onPaymentToChange} />
+      </MoreFeature>
+
+      {/* Reset always last */}
+      <button type="button" onClick={onResetFilters}>
+        Reset Filters
+      </button>
     </div>
   );
 }
