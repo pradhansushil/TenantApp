@@ -1,3 +1,5 @@
+import MoreFeature from "./MoreFeature";
+
 export default function MaintenanceFilters({
   searchText,
   setSearchText,
@@ -13,15 +15,13 @@ export default function MaintenanceFilters({
 }) {
   return (
     <div className="filter-group">
-      {/* Text Search */}
+      {/* Inline (always visible) */}
       <input
         type="text"
         placeholder="Search by tenant, unit, or description"
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
       />
-
-      {/* Predefined Date Range */}
       <select
         value={dateRange}
         onChange={(e) => setDateRange(e.target.value)}
@@ -33,30 +33,32 @@ export default function MaintenanceFilters({
         <option value="ThisYear">This Year</option>
       </select>
 
-      {/* Custom Date Range */}
+      {/* Show one date field inline to hint at “date mode” */}
       <input
         type="date"
         value={customStartDate}
         onChange={(e) => setCustomStartDate(e.target.value)}
       />
-      <input
-        type="date"
-        value={customEndDate}
-        onChange={(e) => setCustomEndDate(e.target.value)}
-      />
 
-      {/* Sort Options */}
-      <select
-        value={sortOption}
-        onChange={(e) => setSortOption(e.target.value)}
-      >
-        <option value="Newest">Newest First</option>
-        <option value="Oldest">Oldest First</option>
-        <option value="TenantAtoZ">Tenant Name A-Z</option>
-        <option value="TenantZtoA">Tenant Name Z-A</option>
-      </select>
+      {/* More feature holds the rest */}
+      <MoreFeature>
+        <input
+          type="date"
+          value={customEndDate}
+          onChange={(e) => setCustomEndDate(e.target.value)}
+        />
+        <select
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+        >
+          <option value="Newest">Newest First</option>
+          <option value="Oldest">Oldest First</option>
+          <option value="TenantAtoZ">Tenant Name A-Z</option>
+          <option value="TenantZtoA">Tenant Name Z-A</option>
+        </select>
+      </MoreFeature>
 
-      {/* Reset Filters */}
+      {/* Reset */}
       <button type="button" onClick={resetFilters}>
         Reset Filters
       </button>
