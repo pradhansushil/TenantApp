@@ -296,3 +296,107 @@ label {
   color: var(--color-primary-dark);
   border-color: var(--color-primary);
 }
+
+/* ============================================
+   Button Links (for table actions)
+   ============================================ */
+
+.btn-link {
+  display: inline;
+  padding: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+.btn-link-primary {
+  color: var(--color-primary);
+}
+
+.btn-link-primary:hover {
+  color: var(--color-primary-dark);
+}
+
+.btn-link-danger {
+  color: var(--color-danger);
+}
+
+.btn-link-danger:hover {
+  color: var(--color-danger-dark);
+}
+
+/* ============================================
+   Page Header (title + action button)
+   ============================================ */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xl);
+  gap: var(--spacing-md);
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+/* Mobile: stack vertically */
+@media (max-width: 640px) {
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .page-header .btn {
+    width: 100%;
+  }
+}
+
+/* ============================================
+   Loading, Error, and Empty States
+   ============================================ */
+
+.loading-state,
+.error-state,
+.empty-state {
+  padding: var(--spacing-2xl);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.error-state {
+  color: var(--color-danger);
+  background-color: var(--color-danger-light);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md);
+}
+
+.empty-state {
+  background-color: var(--color-bg-secondary);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: var(--font-size-base);
+}
