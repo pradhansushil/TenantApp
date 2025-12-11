@@ -138,15 +138,19 @@ export default function Tenants() {
     setFilterType("name");
   };
 
-  if (loading) return <p>Loading tenants...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <div className="loading-state">Loading tenants...</div>;
+  if (error) return <div className="error-state">{error}</div>;
 
   return (
-    <div>
+    <div className="page-container">
       <Toast message={toast.message} type={toast.type} onClose={clearToast} />
 
-      <h1>Tenant Management</h1>
-      <button onClick={handleAddClick}>Add Tenant</button>
+      <div className="page-header">
+        <h1>Tenant Management</h1>
+        <button className="btn btn-primary" onClick={handleAddClick}>
+          Add Tenant
+        </button>
+      </div>
 
       <TenantModal
         isOpen={isModalOpen}
@@ -166,7 +170,6 @@ export default function Tenants() {
         cancelText="Cancel"
       />
 
-      {/* Filters (includes sort dropdown and reset button inside) */}
       <TenantFilters
         searchName={searchName}
         onSearchNameChange={(e) => setSearchName(e.target.value)}
@@ -181,42 +184,50 @@ export default function Tenants() {
         onResetFilters={handleResetFilters}
       />
 
-      {/* Tenant Table */}
       {tenants.length === 0 ? (
-        <p>No tenants found.</p>
+        <div className="empty-state">
+          <p>No tenants found.</p>
+        </div>
       ) : (
-        <table border="1" cellPadding="5">
-          <thead>
-            <tr>
-              <th>TenantID</th>
-              <th>Name</th>
-              <th>Unit</th>
-              <th>MoveInDate</th>
-              <th>Phone</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredTenants.map((t) => (
-              <tr key={t.TenantID}>
-                <td>{t.TenantID}</td>
-                <td>{t.Name}</td>
-                <td>{t.Unit}</td>
-                <td>{t.MoveInDate}</td>
-                <td>{t.Phone}</td>
-                <td>
-                  <a href="#" onClick={() => handleEditClick(t)}>
-                    Edit
-                  </a>{" "}
-                  |{" "}
-                  <a href="#" onClick={() => handleDelete(t.TenantID)}>
-                    Delete
-                  </a>
-                </td>
+        <div className="table-container">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Tenant ID</th>
+                <th>Name</th>
+                <th>Unit</th>
+                <th>Move-in Date</th>
+                <th>Phone</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredTenants.map((t) => (
+                <tr key={t.TenantID}>
+                  <td>{t.TenantID}</td>
+                  <td>{t.Name}</td>
+                  <td>{t.Unit}</td>
+                  <td>{t.MoveInDate}</td>
+                  <td>{t.Phone}</td>
+                  <td className="table-actions">
+                    <button
+                      className="btn-link btn-link-primary"
+                      onClick={() => handleEditClick(t)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="btn-link btn-link-danger"
+                      onClick={() => handleDelete(t.TenantID)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
