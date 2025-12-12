@@ -4,21 +4,36 @@ import { Link } from "react-router-dom";
 const Header = () => {
   return (
     // <header> is semantic HTML for page header
-    <header role="banner" aria-label="Property Management Web App Header">
+    <header
+      className="site-header"
+      role="banner"
+      aria-label="Property Management Web App Header"
+    >
       {/* <nav> represents the navigation bar */}
-      <nav role="navigation" aria-label="Main Navigation">
+      <nav className="site-nav" role="navigation" aria-label="Main Navigation">
+        {/* Logo/Brand name */}
+        <div className="nav-brand">
+          <Link to="/">Property Management</Link>
+        </div>
+
         {/* <ul> is a list of navigation links */}
-        <ul>
+        <ul className="nav-links">
           {/* Each <li> contains a Link to a route */}
-          <li>
+          <li className="nav-item">
             {/* Use React Router Link instead of <a> for SPA navigation */}
-            <Link to="/">Home</Link>
+            <Link to="/" className="nav-link">
+              Home
+            </Link>
           </li>
-          <li>
-            <Link to="/tenant-portal">Tenant Portal</Link>
+          <li className="nav-item">
+            <Link to="/tenant-portal" className="nav-link">
+              Tenant Portal
+            </Link>
           </li>
-          <li>
-            <Link to="/admin-login">Admin Login</Link>
+          <li className="nav-item">
+            <Link to="/admin-login" className="nav-link nav-link-cta">
+              Admin Login
+            </Link>
           </li>
         </ul>
       </nav>
@@ -26,5 +41,4 @@ const Header = () => {
   );
 };
 
-// Export the component so it can be imported elsewhere
 export default Header;
