@@ -2,18 +2,21 @@ export default function About() {
   return (
     <section aria-labelledby="about-heading" className="about-section">
       <h2 id="about-heading" className="about-heading">
-        About Our Property Management Services
+        Prime Location for Your Business or Home
       </h2>
       <p className="about-paragraph">
-        We specialize in managing both residential and commercial properties,
-        ensuring each one is well-maintained and operates smoothly. Our goal is
-        to provide reliable, stress-free management for property owners while
-        keeping tenants satisfied.
+        Located at a busy intersection with excellent visibility and
+        accessibility, our properties offer both commercial spaces and
+        residential apartments to fit your needs. Whether you're looking for a
+        storefront with high foot traffic or an affordable apartment in a
+        convenient location, we provide well-maintained properties at
+        competitive rates.
       </p>
       <p className="about-paragraph">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora
-        recusandae consequuntur pariatur totam non commodi provident doloremque
-        quisquam nihil quia!
+        Our commercial spaces are perfect for retail businesses, while our
+        residential units range from budget-friendly options to mid-tier
+        apartments with full amenities. Experience responsive management and
+        fair pricing in a location that works for you.
       </p>
     </section>
   );
