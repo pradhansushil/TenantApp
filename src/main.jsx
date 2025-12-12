@@ -10,6 +10,12 @@ import "./styles/components.css";
 import "./styles/tables.css";
 import "./styles/modals.css";
 import "./styles/filter.css";
+import "./styles/hero.css";
+import "./styles/gallery.css";
+import "./styles/about.css";
+import "./styles/header.css";
+import "./styles/footer.css";
+import "./styles/tenant-portal.css";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
