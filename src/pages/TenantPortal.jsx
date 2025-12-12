@@ -19,16 +19,43 @@ export default function TenantPortal() {
         <Toast message={toastMessage} type={toastType} onClose={closeToast} />
       )}
 
-      <main>
-        <h1>Tenant Portal</h1>
+      <main className="tenant-portal">
+        <div className="tenant-portal-container">
+          <h1 className="tenant-portal-title">Tenant Portal</h1>
+          <p className="tenant-portal-subtitle">
+            Welcome! Use the options below to make a payment or submit a
+            maintenance request.
+          </p>
 
-        <section>
-          <button onClick={() => setShowPaymentModal(true)}>
-            Make Payment
-          </button>
-          <button onClick={() => setShowMaintenanceModal(true)}>
-            Make Maintenance Request
-          </button>
+          <section className="tenant-portal-actions">
+            <div className="tenant-action-card">
+              <div className="tenant-action-icon">💳</div>
+              <h2 className="tenant-action-title">Make Payment</h2>
+              <p className="tenant-action-description">
+                Submit your rent payment securely online.
+              </p>
+              <button
+                className="btn btn-primary btn-large"
+                onClick={() => setShowPaymentModal(true)}
+              >
+                Make Payment
+              </button>
+            </div>
+
+            <div className="tenant-action-card">
+              <div className="tenant-action-icon">🔧</div>
+              <h2 className="tenant-action-title">Maintenance Request</h2>
+              <p className="tenant-action-description">
+                Report an issue that needs attention.
+              </p>
+              <button
+                className="btn btn-secondary btn-large"
+                onClick={() => setShowMaintenanceModal(true)}
+              >
+                Submit Request
+              </button>
+            </div>
+          </section>
 
           {/* PAYMENT MODAL */}
           <PaymentModal
@@ -45,7 +72,7 @@ export default function TenantPortal() {
             setToastMessage={setToastMessage}
             setToastType={setToastType}
           />
-        </section>
+        </div>
       </main>
     </>
   );
