@@ -1,7 +1,7 @@
 const Gallery = () => {
   return (
     // The <section> element semantically groups the gallery content.
-    <section aria-labelledby="gallery-heading">
+    <section className="gallery" aria-labelledby="gallery-heading">
       {/* Heading for the gallery section */}
       <h2 id="gallery-heading">Property Gallery</h2>
 
