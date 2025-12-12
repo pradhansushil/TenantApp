@@ -1,15 +1,19 @@
 export default function UnitFilters({
   statusFilter,
-  onStatusFilterChange,
+  setStatusFilter,
   sortType,
-  onSortTypeChange,
-  onResetFilters,
+  setSortType,
+  resetFilters,
 }) {
   return (
     <div className="filter-group">
       {/* Status Filter */}
       <label htmlFor="status">Status:</label>
-      <select id="status" value={statusFilter} onChange={onStatusFilterChange}>
+      <select
+        id="status"
+        value={statusFilter}
+        onChange={(e) => setStatusFilter(e.target.value)}
+      >
         <option value="All">All</option>
         <option value="Occupied">Occupied</option>
         <option value="Vacant">Vacant</option>
@@ -17,13 +21,19 @@ export default function UnitFilters({
 
       {/* Sort Filter */}
       <label htmlFor="sort">Sort by:</label>
-      <select id="sort" value={sortType} onChange={onSortTypeChange}>
+      <select
+        id="sort"
+        value={sortType}
+        onChange={(e) => setSortType(e.target.value)}
+      >
         <option value="UnitNumber">Unit Number</option>
         <option value="Rent">Rent</option>
       </select>
 
       {/* Reset Button */}
-      <button onClick={onResetFilters}>Reset Filters</button>
+      <button className="btn btn-secondary" onClick={resetFilters}>
+        Reset Filters
+      </button>
     </div>
   );
 }
