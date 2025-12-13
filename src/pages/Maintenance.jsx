@@ -68,8 +68,10 @@ const Maintenance = () => {
   );
 
   return (
-    <div>
-      <h1>Maintenance Requests</h1>
+    <div className="page-container">
+      <div className="page-header">
+        <h1>Maintenance Requests</h1>
+      </div>
 
       {/* Always show filters */}
       <MaintenanceFilters
@@ -87,11 +89,17 @@ const Maintenance = () => {
       />
 
       {/* Loading state */}
-      {loading && <p>Loading maintenance requests...</p>}
+      {loading && (
+        <div className="loading-state">
+          <p>Loading maintenance requests...</p>
+        </div>
+      )}
 
       {/* No data state */}
       {!loading && filteredRequests.length === 0 && (
-        <p>No maintenance requests found.</p>
+        <div className="empty-state">
+          <p>No maintenance requests found.</p>
+        </div>
       )}
 
       {/* Table */}
