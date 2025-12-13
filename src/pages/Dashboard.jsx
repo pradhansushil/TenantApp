@@ -1,20 +1,28 @@
-// dashboard.jsx
-// src/pages/
-
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DashboardTenants from "../components/admin/dashboard/DashboardTenants";
 import DashboardMaintenance from "../components/admin/dashboard/DashboardMaintenance";
 import DashboardPayments from "../components/admin/dashboard/DashboardPayments";
 import DashboardGraph from "../components/admin/dashboard/DashboardGraph";
 
+// Route mapping - separation of concerns
+const SECTION_ROUTES = {
+  Tenants: "/admin/tenants",
+  Maintenance: "/admin/maintenance",
+  Payments: "/admin/payments",
+};
+
 export default function Dashboard() {
   const [refreshCounter, setRefreshCounter] = useState(0);
+  const navigate = useNavigate();
 
   const handleRefresh = () => setRefreshCounter((prev) => prev + 1);
 
   const handleViewAll = (section) => {
-    console.log(`View all ${section}`);
-    // Optionally navigate or open a modal/page here
+    const route = SECTION_ROUTES[section];
+    if (route) {
+      navigate(route);
+    }
   };
 
   return (
