@@ -140,11 +140,18 @@ export default function Units() {
   };
 
   return (
-    <div>
+    <div className="page-container">
       <Toast message={toast.message} type={toast.type} onClose={clearToast} />
 
-      <h1>Unit Management</h1>
-      <button onClick={() => setIsAddModalOpen(true)}>Add Unit</button>
+      <div className="page-header">
+        <h1>Unit Management</h1>
+        <button
+          className="btn btn-primary"
+          onClick={() => setIsAddModalOpen(true)}
+        >
+          Add Unit
+        </button>
+      </div>
 
       {/* Filters - always visible */}
       <UnitFilters
@@ -156,62 +163,83 @@ export default function Units() {
       />
 
       {loading ? (
-        <p>Loading units...</p>
+        <div className="loading-state">
+          <p>Loading units...</p>
+        </div>
       ) : error ? (
-        <p>{error}</p>
+        <div className="error-state">
+          <p>{error}</p>
+        </div>
       ) : units.length === 0 ? (
-        <p>No units found.</p>
+        <div className="empty-state">
+          <p>No units found.</p>
+          <button
+            className="btn btn-primary"
+            onClick={() => setIsAddModalOpen(true)}
+          >
+            Add Your First Unit
+          </button>
+        </div>
       ) : (
-        <table className="units-table">
-          <thead>
-            <tr>
-              <th>UnitID</th>
-              <th>UnitNumber</th>
-              <th>Status</th>
-              <th>TenantName</th>
-              <th>MoveInDate</th>
-              <th>Rent</th>
-              <th>Notes</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUnits.map((unit) => (
-              <tr key={unit.UnitID}>
-                <td>{unit.UnitID}</td>
-                <td>{unit.UnitNumber}</td>
-                <td>{unit.Status}</td>
-                <td>{unit.TenantName || "-"}</td>
-                <td>{unit.MoveInDate || "-"}</td>
-                <td>{unit.Rent || "-"}</td>
-                <td>{unit.Notes || "-"}</td>
-                <td>
-                  <a
-                    href="#"
-                    style={{ marginRight: "10px" }}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setEditingUnit(unit);
-                      setIsEditModalOpen(true);
-                    }}
-                  >
-                    Edit
-                  </a>
-                  <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setUnitToDelete(unit.UnitID);
-                      setIsConfirmOpen(true);
-                    }}
-                  >
-                    Delete
-                  </a>
-                </td>
+        <div className="table-container">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Unit ID</th>
+                <th>Unit Number</th>
+                <th>Status</th>
+                <th>Tenant Name</th>
+                <th>Move In Date</th>
+                <th>Rent</th>
+                <th>Notes</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredUnits.map((unit) => (
+                <tr key={unit.UnitID}>
+                  <td>{unit.UnitID}</td>
+                  <td>{unit.UnitNumber}</td>
+                  <td>
+                    <span
+                      className={`badge badge-${
+                        unit.Status?.toLowerCase() || "default"
+                      }`}
+                    >
+                      {unit.Status}
+                    </span>
+                  </td>
+                  <td>{unit.TenantName || "-"}</td>
+                  <td>{unit.MoveInDate || "-"}</td>
+                  <td>${unit.Rent || "-"}</td>
+                  <td>{unit.Notes || "-"}</td>
+                  <td>
+                    <div className="table-actions">
+                      <button
+                        className="btn-link"
+                        onClick={() => {
+                          setEditingUnit(unit);
+                          setIsEditModalOpen(true);
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="btn-link btn-link-danger"
+                        onClick={() => {
+                          setUnitToDelete(unit.UnitID);
+                          setIsConfirmOpen(true);
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       <AddUnitModal
