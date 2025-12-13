@@ -9,12 +9,12 @@ import AdminPanel from "./pages/AdminPanel";
 export function App() {
   const location = useLocation();
 
-  // Only show Header if NOT on admin pages
-  const showHeader = !location.pathname.startsWith("/admin");
+  // Only show Header and Footer if NOT on admin pages
+  const showHeaderFooter = !location.pathname.startsWith("/admin");
 
   return (
     <div className="App">
-      {showHeader && <Header />}
+      {showHeaderFooter && <Header />}
 
       <Routes>
         {/* Home page route */}
@@ -30,8 +30,8 @@ export function App() {
         <Route path="/admin/*" element={<AdminPanel />} />
       </Routes>
 
-      {/* Footer outside Routes so it shows on all pages */}
-      <Footer />
+      {/* Footer only shows on public pages, not admin pages */}
+      {showHeaderFooter && <Footer />}
     </div>
   );
 }
