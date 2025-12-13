@@ -72,17 +72,11 @@ export default function Payments() {
       return true;
     });
 
-  if (loading) {
-    return <div>Loading payments...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
   return (
-    <div>
-      <h1>All Payments</h1>
+    <div className="page-container">
+      <div className="page-header">
+        <h1>Payment History</h1>
+      </div>
 
       {/* Filters (with Reset button inside PaymentFilters) */}
       <PaymentFilters
@@ -100,39 +94,61 @@ export default function Payments() {
         onPaymentFromChange={(e) => setPaymentFrom(e.target.value)}
         paymentTo={paymentTo}
         onPaymentToChange={(e) => setPaymentTo(e.target.value)}
-        onResetFilters={handleResetFilters} // ✅ passed down
+        onResetFilters={handleResetFilters}
       />
 
-      {/* Payments Table */}
-      {filteredPayments.length === 0 ? (
-        <p>No payments found.</p>
+      {loading ? (
+        <div className="loading-state">
+          <p>Loading payments...</p>
+        </div>
+      ) : error ? (
+        <div className="error-state">
+          <p>{error}</p>
+        </div>
+      ) : filteredPayments.length === 0 ? (
+        <div className="empty-state">
+          <p>No payments found.</p>
+        </div>
       ) : (
-        <table border="1" cellPadding="5">
-          <thead>
-            <tr>
-              <th>Payment ID</th>
-              <th>Tenant ID</th>
-              <th>Unit Number</th>
-              <th>Payment Date</th>
-              <th>Amount</th>
-              <th>Payment Method</th>
-              <th>Reference</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredPayments.map((payment, index) => (
-              <tr key={payment.PaymentID || index}>
-                <td>{payment.PaymentID}</td>
-                <td>{payment.TenantID}</td>
-                <td>{payment.UnitNumber}</td>
-                <td>{payment.PaymentDate}</td>
-                <td>${parseFloat(payment.Amount || 0).toFixed(2)}</td>
-                <td>{payment.PaymentMethod}</td>
-                <td>{payment.Reference || "-"}</td>
+        <div className="table-container">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Payment ID</th>
+                <th>Tenant ID</th>
+                <th>Unit Number</th>
+                <th>Payment Date</th>
+                <th>Amount</th>
+                <th>Payment Method</th>
+                <th>Reference</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredPayments.map((payment, index) => (
+                <tr key={payment.PaymentID || index}>
+                  <td>{payment.PaymentID}</td>
+                  <td>{payment.TenantID}</td>
+                  <td>{payment.UnitNumber}</td>
+                  <td>{payment.PaymentDate}</td>
+                  <td>${parseFloat(payment.Amount || 0).toFixed(2)}</td>
+                  <td>
+                    <span
+                      className={`badge badge-${
+                        payment.PaymentMethod?.toLowerCase().replace(
+                          /\s+/g,
+                          "-"
+                        ) || "default"
+                      }`}
+                    >
+                      {payment.PaymentMethod}
+                    </span>
+                  </td>
+                  <td>{payment.Reference || "-"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
