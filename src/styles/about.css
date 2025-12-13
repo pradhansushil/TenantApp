@@ -1,0 +1,63 @@
+/* ============================================
+   ABOUT SECTION STYLES
+   ============================================ */
+
+.about-section {
+  padding: var(--spacing-3xl) var(--spacing-xl);
+  background-color: var(--color-bg-primary);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.about-heading {
+  text-align: center;
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-2xl);
+  line-height: var(--line-height-tight);
+}
+
+.about-paragraph {
+  text-align: justify;
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--spacing-lg);
+}
+
+.about-paragraph:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+  .about-section {
+    padding: var(--spacing-2xl) var(--spacing-lg);
+  }
+
+  .about-heading {
+    font-size: var(--font-size-3xl);
+  }
+
+  .about-paragraph {
+    font-size: var(--font-size-base);
+  }
+}
+
+@media (max-width: 480px) {
+  .about-section {
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+
+  .about-heading {
+    font-size: var(--font-size-2xl);
+  }
+
+  .about-paragraph {
+    text-align: left;
+  }
+}

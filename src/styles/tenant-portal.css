@@ -1,0 +1,140 @@
+/* ============================================
+   TENANT PORTAL STYLES
+   ============================================ */
+
+.tenant-portal {
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    var(--color-bg-primary) 0%,
+    var(--color-bg-secondary) 100%
+  );
+  padding: var(--spacing-3xl) var(--spacing-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tenant-portal-container {
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.tenant-portal-title {
+  text-align: center;
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.tenant-portal-subtitle {
+  text-align: center;
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-3xl);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Action Cards Layout */
+.tenant-portal-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-2xl);
+}
+
+.tenant-action-card {
+  background-color: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-2xl);
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  transition: transform var(--transition-normal),
+    box-shadow var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tenant-action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+}
+
+.tenant-action-icon {
+  font-size: 4rem;
+  margin-bottom: var(--spacing-lg);
+}
+
+.tenant-action-title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.tenant-action-description {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-xl);
+  line-height: var(--line-height-relaxed);
+}
+
+/* Large Button Style */
+.btn-large {
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-size-lg);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+  .tenant-portal {
+    padding: var(--spacing-2xl) var(--spacing-lg);
+  }
+
+  .tenant-portal-title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .tenant-portal-subtitle {
+    font-size: var(--font-size-base);
+  }
+
+  .tenant-portal-actions {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+  }
+
+  .tenant-action-card {
+    padding: var(--spacing-xl);
+  }
+
+  .tenant-action-icon {
+    font-size: 3rem;
+  }
+
+  .tenant-action-title {
+    font-size: var(--font-size-xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .tenant-portal {
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+
+  .tenant-portal-title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .tenant-action-icon {
+    font-size: 2.5rem;
+  }
+}

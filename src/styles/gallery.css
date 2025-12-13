@@ -1,0 +1,77 @@
+/* ============================================
+   GALLERY SECTION STYLES
+   ============================================ */
+
+.gallery {
+  padding: var(--spacing-3xl) var(--spacing-xl);
+  background-color: var(--color-bg-secondary);
+}
+
+#gallery-heading {
+  text-align: center;
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.gallery-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.gallery-container img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-normal),
+    box-shadow var(--transition-normal);
+  cursor: pointer;
+}
+
+.gallery-container img:hover {
+  transform: scale(1.03);
+  box-shadow: var(--shadow-xl);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+  .gallery {
+    padding: var(--spacing-2xl) var(--spacing-lg);
+  }
+
+  #gallery-heading {
+    font-size: var(--font-size-3xl);
+  }
+
+  .gallery-container {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+
+  .gallery-container img {
+    height: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .gallery {
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+
+  #gallery-heading {
+    font-size: var(--font-size-2xl);
+  }
+
+  .gallery-container img {
+    height: 200px;
+  }
+}
