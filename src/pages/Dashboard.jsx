@@ -1,3 +1,6 @@
+// dashboard.jsx
+// src/pages/
+
 import { useState } from "react";
 import DashboardTenants from "../components/admin/dashboard/DashboardTenants";
 import DashboardMaintenance from "../components/admin/dashboard/DashboardMaintenance";
@@ -15,9 +18,9 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="dashboard-container p-6 space-y-8">
+    <div className="dashboard-container">
       {/* Widgets Grid */}
-      <div className="dashboard-widgets grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="dashboard-widgets">
         <DashboardTenants
           onViewAll={handleViewAll}
           refreshCounter={refreshCounter}
@@ -33,7 +36,7 @@ export default function Dashboard() {
       </div>
 
       {/* Line Graph Section */}
-      <div className="dashboard-graph mt-8">
+      <div className="dashboard-graph">
         <DashboardGraph refreshCounter={refreshCounter} />
       </div>
     </div>
