@@ -1,0 +1,229 @@
+/* ============================================
+   HERO SECTION STYLES
+   ============================================ */
+
+.hero {
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  background: linear-gradient(
+    135deg,
+    var(--color-bg-primary) 0%,
+    var(--color-bg-secondary) 100%
+  );
+  overflow: hidden;
+}
+
+.hero-content {
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: var(--spacing-3xl);
+}
+
+/* Text content on the left */
+.hero-text {
+  z-index: 10;
+  max-width: 600px;
+}
+
+.hero-title {
+  font-size: var(--font-size-5xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-lg);
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.02em;
+}
+
+.hero-description {
+  font-size: var(--font-size-xl);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-2xl);
+  line-height: var(--line-height-relaxed);
+}
+
+/* CTA Button */
+.hero-cta {
+  display: inline-block;
+  padding: var(--spacing-md) var(--spacing-2xl);
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-primary);
+  text-decoration: none;
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-lg);
+  transition: background-color var(--transition-normal),
+    transform var(--transition-normal);
+}
+
+.hero-cta:hover {
+  background-color: var(--color-primary);
+  color: white;
+  transform: scale(1.05);
+}
+
+/* Collage-style image container on the right */
+.hero-images {
+  position: relative;
+  width: 100%;
+  height: 600px;
+}
+
+/* Base image styles */
+.hero-image {
+  position: absolute;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  object-fit: cover;
+  transition: transform var(--transition-slow),
+    box-shadow var(--transition-slow);
+}
+
+.hero-image:hover {
+  transform: scale(1.05) rotate(0deg) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  z-index: 20;
+}
+
+/* Individual image positioning for collage effect */
+.hero-image-1 {
+  width: 400px;
+  height: 300px;
+  top: 0;
+  left: 0;
+  z-index: 4;
+}
+
+.hero-image-2 {
+  width: 350px;
+  height: 250px;
+  top: 100px;
+  right: 0;
+  z-index: 3;
+  transform: rotate(5deg);
+}
+
+.hero-image-3 {
+  width: 300px;
+  height: 200px;
+  bottom: 80px;
+  left: 50px;
+  z-index: 2;
+  transform: rotate(-4deg);
+}
+
+.hero-image-4 {
+  width: 280px;
+  height: 220px;
+  bottom: 0;
+  right: 80px;
+  z-index: 1;
+  transform: rotate(3deg);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Tablets and smaller */
+@media (max-width: 1024px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-2xl);
+  }
+
+  .hero-text {
+    text-align: center;
+    margin: 0 auto;
+  }
+
+  .hero-images {
+    height: 400px;
+    margin: 0 auto;
+  }
+
+  .hero-image-1 {
+    width: 300px;
+    height: 220px;
+  }
+
+  .hero-image-2 {
+    width: 260px;
+    height: 190px;
+    top: 80px;
+  }
+
+  .hero-image-3 {
+    width: 220px;
+    height: 160px;
+    bottom: 60px;
+  }
+
+  .hero-image-4 {
+    width: 200px;
+    height: 160px;
+    right: 50px;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 640px) {
+  .hero {
+    min-height: auto;
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+
+  .hero-title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .hero-description {
+    font-size: var(--font-size-base);
+  }
+
+  .hero-cta {
+    padding: var(--spacing-sm) var(--spacing-xl);
+    font-size: var(--font-size-base);
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Simplified single-column layout on mobile */
+  .hero-images {
+    height: 300px;
+    margin-top: var(--spacing-xl);
+  }
+
+  .hero-image-1 {
+    width: 220px;
+    height: 160px;
+    left: 10px;
+  }
+
+  .hero-image-2 {
+    width: 180px;
+    height: 130px;
+    right: 10px;
+    top: 50px;
+  }
+
+  .hero-image-3 {
+    width: 160px;
+    height: 120px;
+    bottom: 50px;
+    left: 30px;
+  }
+
+  .hero-image-4 {
+    width: 140px;
+    height: 110px;
+    bottom: 10px;
+    right: 30px;
+  }
+}

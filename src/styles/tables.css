@@ -1,0 +1,214 @@
+/* ============================================
+   Table Container
+   ============================================ */
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: var(--spacing-lg);
+}
+
+.table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: var(--color-gray-100);
+  border-radius: var(--radius-md);
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: var(--color-gray-300);
+  border-radius: var(--radius-md);
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-400);
+}
+
+/* ============================================
+   Base Table Styles
+   ============================================ */
+
+table,
+.tenant-table,
+.maintenance-table,
+.payments-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--color-white);
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+/* ============================================
+   Table Headers
+   ============================================ */
+
+thead {
+  background-color: var(--color-gray-50);
+  border-bottom: 2px solid var(--color-border);
+}
+
+th {
+  padding: var(--spacing-md);
+  text-align: left;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+/* ============================================
+   Table Body & Rows
+   ============================================ */
+
+tbody tr {
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color var(--transition-fast);
+}
+
+tbody tr:nth-child(even) {
+  background-color: var(--color-gray-100);
+}
+
+tbody tr:hover {
+  background-color: var(--color-primary-light);
+  cursor: pointer;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* ============================================
+   Table Cells
+   ============================================ */
+
+td {
+  padding: var(--spacing-md);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  vertical-align: middle;
+}
+
+td a {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+  transition: color var(--transition-fast);
+}
+
+td a:hover {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
+}
+
+/* ============================================
+   Action Links
+   ============================================ */
+
+td a[href*="edit"],
+td a[href*="Edit"] {
+  color: var(--color-primary);
+  margin-right: var(--spacing-sm);
+}
+
+td a[href*="delete"],
+td a[href*="Delete"] {
+  color: var(--color-danger);
+}
+
+td a[href*="edit"]:hover,
+td a[href*="Edit"]:hover {
+  color: var(--color-primary-dark);
+}
+
+td a[href*="delete"]:hover,
+td a[href*="Delete"]:hover {
+  color: var(--color-danger-dark);
+}
+
+/* ============================================
+   Status Badges
+   ============================================ */
+
+td .badge {
+  display: inline-block;
+}
+
+.status-occupied {
+  color: var(--color-success-dark);
+  font-weight: var(--font-weight-semibold);
+}
+
+.status-vacant {
+  color: var(--color-warning-dark);
+  font-weight: var(--font-weight-semibold);
+}
+
+.status-maintenance {
+  color: var(--color-danger-dark);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ============================================
+   Empty State
+   ============================================ */
+
+.table-empty {
+  padding: var(--spacing-2xl);
+  text-align: center;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* ============================================
+   Dashboard Widget Tables
+   ============================================ */
+
+.dashboard-tenants table,
+.dashboard-maintenance table,
+.dashboard-payments table {
+  font-size: var(--font-size-xs);
+}
+
+.dashboard-tenants th,
+.dashboard-maintenance th,
+.dashboard-payments th,
+.dashboard-tenants td,
+.dashboard-maintenance td,
+.dashboard-payments td {
+  padding: var(--spacing-sm);
+}
+
+.dashboard-tenants tbody tr:hover,
+.dashboard-maintenance tbody tr:hover,
+.dashboard-payments tbody tr:hover {
+  background-color: inherit;
+  cursor: default;
+}
+
+/* ============================================
+   Table Actions Column
+   ============================================ */
+
+.table-actions {
+  white-space: nowrap;
+}
+
+.table-actions .btn-link {
+  margin: 0 var(--spacing-xs);
+}
+
+.table-actions .btn-link:first-child {
+  margin-left: 0;
+}
+
+.table-actions .btn-link:last-child {
+  margin-right: 0;
+}

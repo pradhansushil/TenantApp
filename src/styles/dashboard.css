@@ -1,0 +1,121 @@
+/* ============================================
+   Dashboard Container
+   ============================================ */
+
+.dashboard-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: var(--spacing-md);
+}
+
+@media (min-width: 1024px) {
+  .dashboard-container {
+    padding: var(--spacing-xl);
+  }
+}
+
+/* ============================================
+   Dashboard Widgets Grid
+   ============================================ */
+
+.dashboard-widgets {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
+}
+
+@media (min-width: 1024px) {
+  .dashboard-widgets {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+  }
+}
+
+/* ============================================
+   Dashboard Widget Cards
+   ============================================ */
+
+.dashboard-tenants,
+.dashboard-maintenance,
+.dashboard-payments {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow var(--transition-base);
+  min-width: 0;
+}
+
+.dashboard-tenants:hover,
+.dashboard-maintenance:hover,
+.dashboard-payments:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.dashboard-tenants h2,
+.dashboard-maintenance h2,
+.dashboard-payments h2 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.view-all-link {
+  display: inline-block;
+  margin-top: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  align-self: flex-end;
+}
+
+.view-all-link:hover {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
+}
+
+.dashboard-tenants p,
+.dashboard-maintenance p,
+.dashboard-payments p {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  margin: var(--spacing-lg) 0;
+}
+
+/* ============================================
+   Dashboard Graph Section
+   ============================================ */
+
+.dashboard-graph {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  margin-top: var(--spacing-2xl);
+}
+
+.dashboard-graph h2 {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--color-primary);
+}
+
+@media (min-width: 1024px) {
+  .dashboard-graph {
+    padding: var(--spacing-xl);
+  }
+}
