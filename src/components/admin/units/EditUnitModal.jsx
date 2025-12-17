@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export function EditUnitModal({ isOpen, onClose, unit, onUpdate }) {
+export function EditUnitModal({ isOpen, onClose, onAdd }) {
   const [unitNumber, setUnitNumber] = useState("");
   const [status, setStatus] = useState("Vacant");
   const [tenantName, setTenantName] = useState("");
@@ -8,21 +8,24 @@ export function EditUnitModal({ isOpen, onClose, unit, onUpdate }) {
   const [rent, setRent] = useState("");
   const [notes, setNotes] = useState("");
 
+  // Reset all form fields whenever the modal is opened
+  // Ensures previous input does not persist when editing a different unit
   useEffect(() => {
-    if (isOpen && unit) {
-      setUnitNumber(unit.UnitNumber || "");
-      setStatus(unit.Status || "Vacant");
-      setTenantName(unit.TenantName || "");
-      setMoveInDate(unit.MoveInDate || "");
-      setRent(unit.Rent || "");
-      setNotes(unit.Notes || "");
+    if (isOpen) {
+      setUnitNumber("");
+      setStatus("Vacant");
+      setTenantName("");
+      setMoveInDate("");
+      setRent("");
+      setNotes("");
     }
-  }, [isOpen, unit]);
+  }, [isOpen]);
 
+  // Handle form submission: send unit data to parent and close modal
+  // Default to empty strings for optional fields if left blank
   const handleSubmit = (e) => {
     e.preventDefault();
-    onUpdate({
-      ...unit,
+    onAdd({
       UnitNumber: unitNumber,
       Status: status,
       TenantName: tenantName || "",
@@ -33,7 +36,8 @@ export function EditUnitModal({ isOpen, onClose, unit, onUpdate }) {
     onClose();
   };
 
-  if (!isOpen || !unit) return null;
+  // Do not render modal if it is not open
+  if (!isOpen) return null;
 
   return (
     <div className="modal-overlay">
@@ -45,6 +49,7 @@ export function EditUnitModal({ isOpen, onClose, unit, onUpdate }) {
           </button>
         </div>
         <div className="modal-body">
+          {/* Controlled form inputs: local state updates on user input */}
           <form onSubmit={handleSubmit}>
             <label>
               Unit Number:
