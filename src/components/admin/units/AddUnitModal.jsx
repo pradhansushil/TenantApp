@@ -1,4 +1,3 @@
-// src/utils/unitsModals.jsx
 import { useState, useEffect } from "react";
 
 export function AddUnitModal({ isOpen, onClose, onAdd }) {
@@ -9,7 +8,6 @@ export function AddUnitModal({ isOpen, onClose, onAdd }) {
   const [rent, setRent] = useState("");
   const [notes, setNotes] = useState("");
 
-  // Reset form whenever modal opens
   useEffect(() => {
     if (isOpen) {
       setUnitNumber("");
